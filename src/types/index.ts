@@ -89,3 +89,28 @@ export interface Task {
     created_at: string;
     completed_at: string | null;
 }
+
+export interface DealStage {
+    id: string;
+    name: string;
+    order_index: number;
+    win_probability: number;
+    created_at: string;
+}
+
+export interface Deal {
+    id: string;
+    customer_id: string;
+    title: string;
+    value: number | null;
+    stage: string;
+    probability: number | null;
+    expected_close_date: string | null;
+    notes: string | null;
+    created_at: string;
+    updated_at: string;
+    closed_at: string | null;
+    customer?: {
+        store_name: string;
+    };
+}
