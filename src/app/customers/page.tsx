@@ -11,7 +11,16 @@ export default async function CustomersPage() {
 
     const { data: customers, error } = await supabase
         .from("customers")
-        .select("*")
+        .select(`
+            *,
+            customer_tags (
+                tags (
+                    *
+                )
+            ),
+            customer_contacts (*),
+            customer_social_media (*)
+        `)
         .order("created_at", { ascending: false })
 
     if (error) {
@@ -42,7 +51,12 @@ export default async function CustomersPage() {
                 </div>
             </div>
 
-            <DataTable columns={columns} data={customers || []} searchKey="store_name" />
+            <DataTable columns={columns} data={customers?.map((c: any) => ({
+                ...c,
+                tags: c.customer_tags?.map((ct: any) => ct.tags) || [],
+                contacts: c.customer_contacts || [],
+                social_media: c.customer_social_media || []
+            })) || []} searchKey="store_name" />
         </div>
     )
 }

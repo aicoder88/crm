@@ -14,17 +14,10 @@ import {
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Customer = {
-    id: string
-    store_name: string
-    email: string | null
-    phone: string | null
-    status: "Qualified" | "Interested" | "Not Qualified" | "Not Interested" | "Dog Store"
-    city: string | null
-    province: string | null
-}
+import { Customer, Tag } from "@/types"
+
+// Use the shared Customer type
+
 
 export const columns: ColumnDef<Customer>[] = [
     {
@@ -75,6 +68,46 @@ export const columns: ColumnDef<Customer>[] = [
 
             return <Badge variant={variant}>{status}</Badge>
         },
+    },
+    {
+        accessorKey: "tags",
+        header: "Tags",
+        cell: ({ row }) => {
+            const tags = row.original.tags || []
+            return (
+                <div className="flex flex-wrap gap-1">
+                    {tags.map((tag) => (
+                        <Badge key={tag.id} variant="outline" style={{ borderColor: tag.color, color: tag.color }}>
+                            {tag.name}
+                        </Badge>
+                    ))}
+                </div>
+            )
+        },
+    },
+    {
+        accessorKey: "contacts",
+        header: "Contacts",
+        cell: ({ row }) => {
+            const contacts = row.original.contacts || []
+            return <div className="text-center">{contacts.length}</div>
+        }
+    },
+    {
+        accessorKey: "social_media",
+        header: "Social",
+        cell: ({ row }) => {
+            const social = row.original.social_media || []
+            return (
+                <div className="flex flex-wrap gap-1">
+                    {social.map(s => (
+                        <Badge key={s.id} variant="secondary" className="text-[10px] px-1 h-5">
+                            {s.platform.charAt(0).toUpperCase() + s.platform.slice(1)}
+                        </Badge>
+                    ))}
+                </div>
+            )
+        }
     },
     {
         accessorKey: "email",

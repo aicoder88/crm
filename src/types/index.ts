@@ -17,6 +17,24 @@ export interface Customer {
     location_lng: number | null;
     website: string | null;
     stripe_customer_id: string | null;
+    tags?: Tag[];
+    social_media?: CustomerSocialMedia[];
+    contacts?: CustomerContact[];
+}
+
+export interface Tag {
+    id: string;
+    name: string;
+    color: string;
+    created_at: string;
+}
+
+export interface CustomerSocialMedia {
+    id: string;
+    customer_id: string;
+    platform: 'facebook' | 'instagram' | 'tiktok' | 'youtube';
+    url: string;
+    created_at: string;
 }
 
 export interface CustomerContact {
@@ -46,4 +64,28 @@ export interface TimelineEvent {
     deal_value: number | null;
     note_category: string | null;
     data: any;
+}
+
+export interface Call {
+    id: string;
+    customer_id: string;
+    date: string;
+    duration_minutes: number | null;
+    notes: string | null;
+    outcome: string | null;
+    follow_up_date: string | null;
+    created_at: string;
+}
+
+export interface Task {
+    id: string;
+    customer_id: string | null;
+    type: 'call' | 'email' | 'follow_up' | 'other';
+    title: string;
+    due_date: string;
+    priority: 'low' | 'medium' | 'high';
+    status: 'pending' | 'completed' | 'cancelled';
+    notes: string | null;
+    created_at: string;
+    completed_at: string | null;
 }
