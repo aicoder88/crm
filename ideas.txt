@@ -1,0 +1,20 @@
+
+
+
+   * Tagging System: The tags[] array in the customers table is good for        
+     simplicity, but a many-to-many relationship is more powerful.              
+       * Issue: With an array, you can't easily manage tags themselves (e.g.,   
+         rename a tag everywhere it's used, see all tags in use, or get a count 
+         of customers per tag).                                                 
+       * Suggestion: Create a tags table (id, name) and a customer_tags join    
+         table (customer_id, tag_id). This is a more standard and scalable      
+         approach.                                                              
+   * `customer_timeline` Data: Using a JSONB field for event data is flexible   
+     but can make structured reporting difficult.                               
+       * Issue: Querying against JSONB fields is less performant and more       
+         complex than querying against standard columns.                        
+       * Suggestion: For core, recurring event types (like call), consider      
+         adding specific, indexed columns to the customer_timeline table (e.g., 
+         call_duration, call_outcome). Keep the data field for more dynamic or ▄
+         less critical information.                                            ▀
+                                                                                
