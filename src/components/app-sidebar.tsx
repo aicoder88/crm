@@ -41,7 +41,7 @@ const items = [
     },
     {
         title: "Pipeline",
-        url: "/dashboard/pipeline",
+        url: "/deals",
         icon: Trello,
     },
     {

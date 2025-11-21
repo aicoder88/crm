@@ -9,6 +9,7 @@ import Link from "next/link"
 import { TimelineList } from "@/components/timeline/timeline-list"
 import { TaskList } from "@/components/tasks/task-list"
 import { LogCallDialog } from "@/components/calls/log-call-dialog"
+import { DealsList } from "@/components/deals/deals-list"
 
 export default async function CustomerPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -105,6 +106,16 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
                         </CardHeader>
                         <CardContent>
                             <TaskList customerId={customer.id} />
+                        </CardContent>
+                    </Card>
+
+                    {/* Deals */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Deals</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <DealsList customerId={customer.id} />
                         </CardContent>
                     </Card>
                 </div>
