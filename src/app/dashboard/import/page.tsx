@@ -67,6 +67,7 @@ export default function ImportPage() {
                     // Based on actual CSV structure: name, phone, owner/manager's name, notes, status, email, province, city, address, postal code, website
                     const formattedBatch = batch.map((row: any) => ({
                         store_name: row['name'] || row['Store Name'] || row['store_name'] || 'Unknown Store',
+                        email: row['email'] || row['Email'] || null,
                         phone: row['phone'] || row['Phone'] || null,
                         owner_manager_name: row["owner/manager's name"] || row['owner_manager_name'] || null,
                         status: mapStatus(row['status'] || row['Status']),

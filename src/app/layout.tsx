@@ -17,6 +17,10 @@ export const metadata: Metadata = {
   description: "Customer relationship management for Purrify - Managing B2B pet store relationships across Canada",
 };
 
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/layout/Sidebar";
+import { Header } from "@/components/layout/Header";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +31,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset>
+            <Header />
+            <main className="flex-1 p-6">
+              {children}
+            </main>
+          </SidebarInset>
+        </SidebarProvider>
       </body>
     </html>
   );

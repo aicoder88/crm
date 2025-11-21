@@ -22,21 +22,20 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
+import { toast } from "sonner" // Assuming sonner is installed or use a simple alert for now if not
 
 const formSchema = z.object({
     store_name: z.string().min(2, {
         message: "Store name must be at least 2 characters.",
     }),
     status: z.enum(["Qualified", "Interested", "Not Qualified", "Not Interested", "Dog Store"]),
-    type: z.enum(["B2B", "B2C", "Affiliate"]),
-    phone: z.string().optional(),
     email: z.string().email().optional().or(z.literal("")),
+    phone: z.string().optional(),
     website: z.string().url().optional().or(z.literal("")),
-    owner_manager_name: z.string().optional(),
     street: z.string().optional(),
     city: z.string().optional(),
     province: z.string().optional(),
@@ -44,86 +43,63 @@ const formSchema = z.object({
     notes: z.string().optional(),
 })
 
-type CustomerFormValues = z.infer<typeof formSchema>
-
-import { Customer } from "@/types"
-
-interface CustomerFormProps {
-    initialData?: Partial<Customer>
-    customerId?: string
-}
-
-export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
+export function CustomerForm() {
     const router = useRouter()
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const supabase = createClient()
 
-    const defaultValues: Partial<CustomerFormValues> = initialData ? {
-        store_name: initialData.store_name || "",
-        status: initialData.status || "Qualified",
-        type: initialData.type || "B2B",
-        phone: initialData.phone || "",
-        email: initialData.email || "",
-        website: initialData.website || "",
-        owner_manager_name: initialData.owner_manager_name || "",
-        street: initialData.street || "",
-        city: initialData.city || "",
-        province: initialData.province || "",
-        postal_code: initialData.postal_code || "",
-        notes: initialData.notes || "",
-    } : {
-        store_name: "",
-        status: "Qualified",
-        type: "B2B",
-        phone: "",
-        email: "",
-        website: "",
-        owner_manager_name: "",
-        street: "",
-        city: "",
-        province: "",
-        postal_code: "",
-        notes: "",
-    }
-
-    const form = useForm<CustomerFormValues>({
+    const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues,
+        defaultValues: {
+            store_name: "",
+            status: "Qualified",
+            email: "",
+            phone: "",
+            website: "",
+            street: "",
+            city: "",
+            province: "",
+            postal_code: "",
+            notes: "",
+        },
     })
 
-    async function onSubmit(values: CustomerFormValues) {
-        setLoading(true)
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        setIsLoading(true)
         try {
-            if (customerId) {
-                // Update existing customer
-                const { error } = await supabase
-                    .from("customers")
-                    .update(values)
-                    .eq("id", customerId)
+            const { error } = await supabase.from("customers").insert([
+                {
+                    store_name: values.store_name,
+                    status: values.status,
+                    email: values.email || null,
+                    phone: values.phone || null,
+                    website: values.website || null,
+                    street: values.street || null,
+                    city: values.city || null,
+                    province: values.province || null,
+                    postal_code: values.postal_code || null,
+                    notes: values.notes || null,
+                },
+            ])
 
-                if (error) throw error
-            } else {
-                // Create new customer
-                const { error } = await supabase
-                    .from("customers")
-                    .insert([values])
-
-                if (error) throw error
+            if (error) {
+                throw error
             }
 
-            router.push("/dashboard/customers")
+            router.push("/customers")
             router.refresh()
         } catch (error) {
-            console.error("Error saving customer:", error)
-            // You could add a toast notification here
+            console.error("Error creating customer:", error)
+            alert("Failed to create customer. Please try again.")
         } finally {
-            setLoading(false)
+            setIsLoading(false)
         }
     }
 
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid gap-4 md:grid-cols-2">
                     <FormField
                         control={form.control}
                         name="store_name"
@@ -137,21 +113,6 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                             </FormItem>
                         )}
                     />
-
-                    <FormField
-                        control={form.control}
-                        name="owner_manager_name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Owner/Manager Name</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="John Doe" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
                     <FormField
                         control={form.control}
                         name="status"
@@ -176,30 +137,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                             </FormItem>
                         )}
                     />
+                </div>
 
-                    <FormField
-                        control={form.control}
-                        name="type"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Type</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a type" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="B2B">B2B</SelectItem>
-                                        <SelectItem value="B2C">B2C</SelectItem>
-                                        <SelectItem value="Affiliate">Affiliate</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
+                <div className="grid gap-4 md:grid-cols-3">
                     <FormField
                         control={form.control}
                         name="email"
@@ -207,13 +147,12 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                             <FormItem>
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="contact@example.com" {...field} />
+                                    <Input placeholder="store@example.com" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-
                     <FormField
                         control={form.control}
                         name="phone"
@@ -227,7 +166,6 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                             </FormItem>
                         )}
                     />
-
                     <FormField
                         control={form.control}
                         name="website"
@@ -243,22 +181,21 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                     />
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Address</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <FormField
-                            control={form.control}
-                            name="street"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Street</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="123 Main St" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                <div className="grid gap-4 md:grid-cols-2">
+                    <FormField
+                        control={form.control}
+                        name="street"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Street Address</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="123 Main St" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <div className="grid grid-cols-3 gap-4">
                         <FormField
                             control={form.control}
                             name="city"
@@ -309,7 +246,7 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                             <FormLabel>Notes</FormLabel>
                             <FormControl>
                                 <Textarea
-                                    placeholder="Add any notes here..."
+                                    placeholder="Add any notes about this customer..."
                                     className="resize-none"
                                     {...field}
                                 />
@@ -319,10 +256,15 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                     )}
                 />
 
-                <Button type="submit" disabled={loading}>
-                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {customerId ? "Update Customer" : "Create Customer"}
-                </Button>
+                <div className="flex justify-end gap-4">
+                    <Button type="button" variant="outline" onClick={() => router.back()}>
+                        Cancel
+                    </Button>
+                    <Button type="submit" disabled={isLoading}>
+                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Create Customer
+                    </Button>
+                </div>
             </form>
         </Form>
     )

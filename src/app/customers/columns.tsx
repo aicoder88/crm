@@ -1,9 +1,8 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,32 +12,21 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
 
-import { Customer } from "@/types"
+// This type is used to define the shape of our data.
+// You can use a Zod schema here if you want.
+export type Customer = {
+    id: string
+    store_name: string
+    email: string | null
+    phone: string | null
+    status: "Qualified" | "Interested" | "Not Qualified" | "Not Interested" | "Dog Store"
+    city: string | null
+    province: string | null
+}
 
 export const columns: ColumnDef<Customer>[] = [
-    {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-    },
     {
         accessorKey: "store_name",
         header: ({ column }) => {
@@ -52,27 +40,41 @@ export const columns: ColumnDef<Customer>[] = [
                 </Button>
             )
         },
+        cell: ({ row }) => {
+            return (
+                <Link href={`/customers/${row.original.id}`} className="font-medium hover:underline">
+                    {row.getValue("store_name")}
+                </Link>
+            )
+        },
     },
     {
         accessorKey: "status",
         header: "Status",
         cell: ({ row }) => {
             const status = row.getValue("status") as string
-            return (
-                <Badge variant={
-                    status === "Qualified" ? "default" :
-                        status === "Interested" ? "secondary" :
-                            status === "Not Qualified" ? "destructive" :
-                                "outline"
-                }>
-                    {status}
-                </Badge>
-            )
+            let variant: "default" | "secondary" | "destructive" | "outline" = "default"
+
+            switch (status) {
+                case "Qualified":
+                    variant = "default" // Primary color (purple)
+                    break
+                case "Interested":
+                    variant = "secondary" // Teal/Secondary
+                    break
+                case "Not Qualified":
+                case "Not Interested":
+                    variant = "destructive"
+                    break
+                case "Dog Store":
+                    variant = "outline"
+                    break
+                default:
+                    variant = "outline"
+            }
+
+            return <Badge variant={variant}>{status}</Badge>
         },
-    },
-    {
-        accessorKey: "type",
-        header: "Type",
     },
     {
         accessorKey: "email",
@@ -111,10 +113,10 @@ export const columns: ColumnDef<Customer>[] = [
                             Copy ID
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                            <a href={`/dashboard/customers/${customer.id}`}>View details</a>
+                        <DropdownMenuItem>
+                            <Link href={`/customers/${customer.id}`}>View Details</Link>
                         </DropdownMenuItem>
+                        <DropdownMenuItem>Edit Customer</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

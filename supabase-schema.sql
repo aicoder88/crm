@@ -24,6 +24,7 @@ CREATE TABLE customers (
   
   -- Basic Info
   store_name TEXT NOT NULL,
+  email TEXT,
   phone TEXT,
   owner_manager_name TEXT,
   type TEXT CHECK (type IN ('B2B', 'B2C', 'Affiliate')) DEFAULT 'B2B',

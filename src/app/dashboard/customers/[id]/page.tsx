@@ -5,32 +5,19 @@ import { useParams } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Phone, Mail, MapPin, Globe, Edit, Trash, ArrowLeft } from "lucide-react"
 import Link from "next/link"
-
-type CustomerDetail = {
-    id: string
-    store_name: string
-    status: string
-    type: string
-    phone: string | null
-    email: string | null
-    website: string | null
-    notes: string | null
-    street: string | null
-    city: string | null
-    province: string | null
-    postal_code: string | null
-    owner_manager_name: string | null
-}
+import { Customer } from "@/types"
+import { CustomerContacts } from "@/components/customer-contacts"
+import { CustomerTimeline } from "@/components/customer-timeline"
 
 export default function CustomerDetailPage() {
     const params = useParams()
     const id = params.id as string
-    const [customer, setCustomer] = useState<CustomerDetail | null>(null)
+    const [customer, setCustomer] = useState<Customer | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -45,7 +32,7 @@ export default function CustomerDetailPage() {
                 if (error) {
                     console.error("Error fetching customer:", error)
                 } else {
-                    setCustomer(data)
+                    setCustomer(data as Customer)
                 }
             } catch (err) {
                 console.error("Unexpected error:", err)
@@ -179,27 +166,11 @@ export default function CustomerDetailPage() {
                 </TabsContent>
 
                 <TabsContent value="timeline">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Activity Timeline</CardTitle>
-                            <CardDescription>Recent interactions and events.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-muted-foreground text-sm">Timeline features coming in Phase 3.</p>
-                        </CardContent>
-                    </Card>
+                    <CustomerTimeline customerId={id} />
                 </TabsContent>
 
                 <TabsContent value="contacts">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Contacts</CardTitle>
-                            <CardDescription>Manage people associated with this store.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-muted-foreground text-sm">Contact management coming in Phase 2.</p>
-                        </CardContent>
-                    </Card>
+                    <CustomerContacts customerId={id} />
                 </TabsContent>
             </Tabs>
         </div>

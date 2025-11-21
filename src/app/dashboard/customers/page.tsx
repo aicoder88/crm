@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { DataTable } from "@/components/ui/data-table"
-import { columns, Customer } from "./columns"
+import { columns } from "./columns"
+import { Customer } from "@/types"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Plus, Upload } from "lucide-react"
@@ -22,16 +23,25 @@ export default function CustomersPage() {
                 if (error) {
                     console.error("Error fetching customers:", error)
                 } else {
-                    // Map Supabase data to Customer type
                     const mappedData: Customer[] = (customers || []).map((c) => ({
                         id: c.id,
+                        created_at: c.created_at,
+                        updated_at: c.updated_at,
                         store_name: c.store_name,
-                        status: c.status,
-                        type: c.type,
-                        email: null, // Need to fetch from contacts or use a join
+                        email: c.email,
                         phone: c.phone,
-                        city: c.city,
+                        owner_manager_name: c.owner_manager_name,
+                        type: c.type,
+                        status: c.status,
+                        notes: c.notes,
                         province: c.province,
+                        city: c.city,
+                        street: c.street,
+                        postal_code: c.postal_code,
+                        location_lat: c.location_lat,
+                        location_lng: c.location_lng,
+                        website: c.website,
+                        stripe_customer_id: c.stripe_customer_id,
                     }))
                     setData(mappedData)
                 }

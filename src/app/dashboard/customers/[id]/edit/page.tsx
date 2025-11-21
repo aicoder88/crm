@@ -6,10 +6,12 @@ import { supabase } from "@/lib/supabase"
 import { CustomerForm } from "@/components/customer-form"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
+import { Customer } from "@/types"
+
 export default function EditCustomerPage() {
     const params = useParams()
     const id = params.id as string
-    const [customer, setCustomer] = useState<any>(null)
+    const [customer, setCustomer] = useState<Customer | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {

@@ -1,138 +1,136 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { createClient } from "@/lib/supabase/server";
+import { Users, DollarSign, Package, Activity } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-export default function Home() {
+export default async function DashboardPage() {
+  const supabase = await createClient();
+
+  // Fetch total customers
+  const { count: customerCount, error: countError } = await supabase
+    .from("customers")
+    .select("*", { count: "exact", head: true });
+
+  // Fetch recent customers
+  const { data: recentCustomers, error: recentError } = await supabase
+    .from("customers")
+    .select("id, store_name, city, status, created_at")
+    .order("created_at", { ascending: false })
+    .limit(5);
+
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-8">
-      <div className="max-w-4xl w-full space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Purrify CRM
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            Customer Relationship Management for B2B Pet Store Sales
-          </p>
-          <div className="flex gap-2 justify-center flex-wrap">
-            <Badge variant="secondary">Phase 1: Foundation</Badge>
-            <Badge className="bg-primary">Dark Mode</Badge>
-            <Badge className="bg-accent">Ready for Setup</Badge>
-          </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <div className="flex items-center gap-2">
+          <Button asChild>
+            <Link href="/customers/new">Add Customer</Link>
+          </Button>
         </div>
+      </div>
 
-        {/* Setup Instructions Card */}
+      {/* Metrics Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
-          <CardHeader>
-            <CardTitle>🚀 Next Steps: Configure Supabase</CardTitle>
-            <CardDescription>
-              Your CRM is ready! Follow these 3 steps to get started:
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
-                  1
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">Create Supabase Project</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Go to{" "}
-                    <a
-                      href="https://app.supabase.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline"
-                    >
-                      app.supabase.com
-                    </a>{" "}
-                    and create a new project named &quot;purrify-crm&quot;
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
-                  2
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">Run Database Schema</h3>
-                  <p className="text-sm text-muted-foreground">
-                    In Supabase SQL Editor, run the{" "}
-                    <code className="bg-muted px-1 py-0.5 rounded">supabase-schema.sql</code> file
-                    from your project root
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
-                  3
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">Add Environment Variables</h3>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Create <code className="bg-muted px-1 py-0.5 rounded">.env.local</code> in your
-                    project root:
-                  </p>
-                  <pre className="bg-muted p-3 rounded text-xs overflow-x-auto">
-                    {`NEXT_PUBLIC_SUPABASE_URL=your-project-url.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key`}
-                  </pre>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-4 border-t">
-              <p className="text-sm text-muted-foreground">
-                📖 Detailed instructions:{" "}
-                <code className="bg-muted px-1 py-0.5 rounded">SETUP.md</code>
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Features Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>✨ What&apos;s Built (Phase 1 Foundation)</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 text-sm">
-              <li className="flex items-start gap-2">
-                <span className="text-accent">✓</span>
-                <span>Next.js 14 with App Router &amp; TypeScript</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-accent">✓</span>
-                <span>Purrify dark theme (purple/violet primary, teal accents)</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-accent">✓</span>
-                <span>shadcn/ui component library (20+ components)</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-accent">✓</span>
-                <span>Complete database schema (13 tables, indexes, RLS ready)</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-accent">✓</span>
-                <span>Supabase client configuration</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-muted-foreground">⏳</span>
-                <span className="text-muted-foreground">
-                  Customer list, detail pages, CSV import (next in Phase 1)
-                </span>
-              </li>
-            </ul>
+            <div className="text-2xl font-bold">{customerCount || 0}</div>
+            <p className="text-xs text-muted-foreground">
+              Active B2B relationships
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Deals</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">0</div>
+            <p className="text-xs text-muted-foreground">
+              Pipeline value: $0.00
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Products</CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">0</div>
+            <p className="text-xs text-muted-foreground">
+              SKUs in catalog
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Recent Activity</CardTitle>
+            <Activity className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">0</div>
+            <p className="text-xs text-muted-foreground">
+              Actions this week
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Recent Customers */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle>Recent Customers</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-8">
+              {recentCustomers?.map((customer) => (
+                <div key={customer.id} className="flex items-center">
+                  <div className="ml-4 space-y-1">
+                    <p className="text-sm font-medium leading-none">{customer.store_name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {customer.city} • {customer.status}
+                    </p>
+                  </div>
+                  <div className="ml-auto font-medium">
+                    <Link href={`/customers/${customer.id}`} className="text-sm text-primary hover:underline">
+                      View
+                    </Link>
+                  </div>
+                </div>
+              ))}
+              {(!recentCustomers || recentCustomers.length === 0) && (
+                <p className="text-sm text-muted-foreground">No customers found.</p>
+              )}
+            </div>
           </CardContent>
         </Card>
 
-        {/* Footer */}
-        <div className="text-center text-sm text-muted-foreground">
-          <p>Purrify CRM © 2025 | Built with Next.js, Supabase, and Tailwind CSS</p>
-        </div>
+        {/* Quick Actions / Placeholder for future widgets */}
+        <Card className="col-span-3">
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <Button variant="outline" className="w-full justify-start" asChild>
+              <Link href="/customers/import">
+                Import Customers via CSV
+              </Link>
+            </Button>
+            <Button variant="outline" className="w-full justify-start" disabled>
+              Create New Deal (Coming Soon)
+            </Button>
+            <Button variant="outline" className="w-full justify-start" disabled>
+              Generate Invoice (Coming Soon)
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
