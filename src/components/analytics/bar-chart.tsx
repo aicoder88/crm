@@ -65,14 +65,20 @@ export function BarChart({
     }
 
     return (
-        <Card className="glass-card border-none shadow-lg">
+        <Card className="glass-card group hover:scale-[1.01] transition-all duration-300">
+            {/* Subtle glow effect */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent blur-2xl" />
+            </div>
             {title && (
-                <CardHeader>
-                    <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">{title}</CardTitle>
-                    {description && <CardDescription>{description}</CardDescription>}
+                <CardHeader className="relative z-10">
+                    <CardTitle className="text-xl font-bold bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
+                        {title}
+                    </CardTitle>
+                    {description && <CardDescription className="text-muted-foreground/70">{description}</CardDescription>}
                 </CardHeader>
             )}
-            <CardContent>
+            <CardContent className="relative z-10">
                 <ResponsiveContainer width="100%" height={height}>
                     <RechartsBarChart data={data} layout={layout}>
                         <CartesianGrid strokeDasharray="3 3" className="stroke-white/10" vertical={false} />

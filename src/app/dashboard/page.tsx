@@ -10,7 +10,7 @@ export default function DashboardPage() {
     const { analytics, loading: analyticsLoading } = useFinancialAnalytics();
 
     return (
-        <div className="flex flex-1 flex-col gap-6 p-4">
+        <div className="flex flex-1 flex-col gap-8 animate-fade-in-up">
             <div className="grid auto-rows-min gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <MetricCard
                     title="Total Customers"

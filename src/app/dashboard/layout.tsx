@@ -18,27 +18,30 @@ export default function DashboardLayout({
     return (
         <SidebarProvider>
             <AppSidebar />
-            <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-                    <div className="flex items-center gap-2 px-4">
-                        <SidebarTrigger className="-ml-1" />
-                        <Separator orientation="vertical" className="mr-2 h-4" />
+            <main className="flex flex-1 flex-col transition-all duration-300">
+                <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b border-white/5 bg-background/80 backdrop-blur-xl px-4">
+                    <div className="flex items-center gap-2">
+                        <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground transition-colors" />
+                        <Separator orientation="vertical" className="mr-2 h-4 bg-white/10" />
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="/dashboard">
+                                    <BreadcrumbLink
+                                        href="/dashboard"
+                                        className="text-muted-foreground hover:text-foreground transition-colors"
+                                    >
                                         Dashboard
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
-                                <BreadcrumbSeparator className="hidden md:block" />
+                                <BreadcrumbSeparator className="hidden md:block text-muted-foreground/50" />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>Overview</BreadcrumbPage>
+                                    <BreadcrumbPage className="text-foreground font-medium">Overview</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
                     </div>
                 </header>
-                <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                <div className="flex-1 overflow-auto p-6">
                     {children}
                 </div>
             </main>
