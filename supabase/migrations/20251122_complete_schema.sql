@@ -25,7 +25,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- ==========================================
 
 -- Tags table (centralized tag management)
-CREATE TABLE tags (
+CREATE TABLE IF NOT EXISTS tags (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL UNIQUE,
   color TEXT DEFAULT '#8B5CF6', -- Purple default
@@ -33,7 +33,7 @@ CREATE TABLE tags (
 );
 
 -- Customers (main customer/pet store records)
-CREATE TABLE customers (
+CREATE TABLE IF NOT EXISTS customers (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -64,7 +64,7 @@ CREATE TABLE customers (
 );
 
 -- Customer-Tags many-to-many relationship
-CREATE TABLE customer_tags (
+CREATE TABLE IF NOT EXISTS customer_tags (
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
   tag_id UUID REFERENCES tags(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -72,7 +72,7 @@ CREATE TABLE customer_tags (
 );
 
 -- Customer contacts (multiple contacts per customer)
-CREATE TABLE customer_contacts (
+CREATE TABLE IF NOT EXISTS customer_contacts (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE NOT NULL,
   name TEXT NOT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE customer_contacts (
 );
 
 -- Customer addresses
-CREATE TABLE customer_addresses (
+CREATE TABLE IF NOT EXISTS customer_addresses (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE NOT NULL,
   type TEXT CHECK (type IN ('physical', 'billing', 'shipping')) NOT NULL,
@@ -97,7 +97,7 @@ CREATE TABLE customer_addresses (
 );
 
 -- Social media profiles
-CREATE TABLE customer_social_media (
+CREATE TABLE IF NOT EXISTS customer_social_media (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE NOT NULL,
   platform TEXT CHECK (platform IN ('facebook', 'instagram', 'tiktok', 'youtube')) NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE customer_social_media (
 );
 
 -- Customer timeline (activity feed with structured fields)
-CREATE TABLE customer_timeline (
+CREATE TABLE IF NOT EXISTS customer_timeline (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE NOT NULL,
   type TEXT CHECK (type IN ('call', 'email', 'note', 'invoice', 'shipment', 'deal')) NOT NULL,
@@ -139,7 +139,7 @@ CREATE TABLE customer_timeline (
 -- ==========================================
 
 -- Calls
-CREATE TABLE calls (
+CREATE TABLE IF NOT EXISTS calls (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE NOT NULL,
   date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -151,7 +151,7 @@ CREATE TABLE calls (
 );
 
 -- Tasks
-CREATE TABLE tasks (
+CREATE TABLE IF NOT EXISTS tasks (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE SET NULL,
   type TEXT CHECK (type IN ('call', 'email', 'follow_up', 'other')) DEFAULT 'other',
@@ -165,7 +165,7 @@ CREATE TABLE tasks (
 );
 
 -- Emails (for Gmail integration - Phase 7)
-CREATE TABLE emails (
+CREATE TABLE IF NOT EXISTS emails (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE NOT NULL,
   thread_id TEXT,
@@ -181,7 +181,7 @@ CREATE TABLE emails (
 -- ==========================================
 
 -- Deal stages
-CREATE TABLE deal_stages (
+CREATE TABLE IF NOT EXISTS deal_stages (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL UNIQUE,
   order_index INTEGER NOT NULL,
@@ -197,10 +197,11 @@ INSERT INTO deal_stages (name, order_index, win_probability) VALUES
   ('Follow-up Call Scheduled', 4, 60),
   ('Negotiating Terms', 5, 80),
   ('Closed Won', 6, 100),
-  ('Closed Lost', 7, 0);
+  ('Closed Lost', 7, 0)
+ON CONFLICT (name) DO NOTHING;
 
 -- Deals
-CREATE TABLE deals (
+CREATE TABLE IF NOT EXISTS deals (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE NOT NULL,
   title TEXT NOT NULL,
@@ -219,7 +220,7 @@ CREATE TABLE deals (
 -- ==========================================
 
 -- Invoices
-CREATE TABLE invoices (
+CREATE TABLE IF NOT EXISTS invoices (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE NOT NULL,
   stripe_invoice_id TEXT UNIQUE NOT NULL,
@@ -232,7 +233,7 @@ CREATE TABLE invoices (
 );
 
 -- Invoice items
-CREATE TABLE invoice_items (
+CREATE TABLE IF NOT EXISTS invoice_items (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   invoice_id UUID REFERENCES invoices(id) ON DELETE CASCADE NOT NULL,
   product_sku TEXT,
@@ -248,7 +249,7 @@ CREATE TABLE invoice_items (
 -- ==========================================
 
 -- Shipments
-CREATE TABLE shipments (
+CREATE TABLE IF NOT EXISTS shipments (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE NOT NULL,
   invoice_id UUID REFERENCES invoices(id) ON DELETE SET NULL,
@@ -261,7 +262,7 @@ CREATE TABLE shipments (
 );
 
 -- Shipping events (tracking updates)
-CREATE TABLE shipping_events (
+CREATE TABLE IF NOT EXISTS shipping_events (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   shipment_id UUID REFERENCES shipments(id) ON DELETE CASCADE NOT NULL,
   status TEXT NOT NULL,
@@ -274,33 +275,33 @@ CREATE TABLE shipping_events (
 -- ==========================================
 
 -- Customers
-CREATE INDEX idx_customers_email ON customer_contacts(email);
-CREATE INDEX idx_customers_phone ON customers(phone);
-CREATE INDEX idx_customers_type_status ON customers(type, status);
-CREATE INDEX idx_customers_postal_code ON customers(postal_code);
-CREATE INDEX idx_customers_province ON customers(province);
+CREATE INDEX IF NOT EXISTS idx_customers_email ON customer_contacts(email);
+CREATE INDEX IF NOT EXISTS idx_customers_phone ON customers(phone);
+CREATE INDEX IF NOT EXISTS idx_customers_type_status ON customers(type, status);
+CREATE INDEX IF NOT EXISTS idx_customers_postal_code ON customers(postal_code);
+CREATE INDEX IF NOT EXISTS idx_customers_province ON customers(province);
 
 -- Timeline
-CREATE INDEX idx_timeline_customer ON customer_timeline(customer_id, created_at DESC);
-CREATE INDEX idx_timeline_type ON customer_timeline(type);
-CREATE INDEX idx_timeline_follow_up ON customer_timeline(call_follow_up_date) WHERE call_follow_up_date IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_timeline_customer ON customer_timeline(customer_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_timeline_type ON customer_timeline(type);
+CREATE INDEX IF NOT EXISTS idx_timeline_follow_up ON customer_timeline(call_follow_up_date) WHERE call_follow_up_date IS NOT NULL;
 
 -- Tasks
-CREATE INDEX idx_tasks_due_date ON tasks(due_date) WHERE status = 'pending';
-CREATE INDEX idx_tasks_customer ON tasks(customer_id);
-CREATE INDEX idx_tasks_status ON tasks(status);
+CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON tasks(due_date) WHERE status = 'pending';
+CREATE INDEX IF NOT EXISTS idx_tasks_customer ON tasks(customer_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
 
 -- Deals
-CREATE INDEX idx_deals_customer ON deals(customer_id);
-CREATE INDEX idx_deals_stage ON deals(stage);
-CREATE INDEX idx_deals_expected_close ON deals(expected_close_date);
+CREATE INDEX IF NOT EXISTS idx_deals_customer ON deals(customer_id);
+CREATE INDEX IF NOT EXISTS idx_deals_stage ON deals(stage);
+CREATE INDEX IF NOT EXISTS idx_deals_expected_close ON deals(expected_close_date);
 
 -- Invoices
-CREATE INDEX idx_invoices_customer_status ON invoices(customer_id, status);
-CREATE INDEX idx_invoices_stripe_id ON invoices(stripe_invoice_id);
+CREATE INDEX IF NOT EXISTS idx_invoices_customer_status ON invoices(customer_id, status);
+CREATE INDEX IF NOT EXISTS idx_invoices_stripe_id ON invoices(stripe_invoice_id);
 
 -- Shipments
-CREATE INDEX idx_shipments_tracking ON shipments(tracking_number);
+CREATE INDEX IF NOT EXISTS idx_shipments_tracking ON shipments(tracking_number);
 
 
 -- ==============================================================================
@@ -314,7 +315,7 @@ CREATE INDEX idx_shipments_tracking ON shipments(tracking_number);
 -- PRODUCTS TABLE
 -- ==========================================
 
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   sku TEXT UNIQUE NOT NULL,
   name TEXT NOT NULL,
@@ -332,8 +333,8 @@ CREATE TABLE products (
 );
 
 -- Index for active products lookup
-CREATE INDEX idx_products_active ON products(active) WHERE active = true;
-CREATE INDEX idx_products_sku ON products(sku);
+CREATE INDEX IF NOT EXISTS idx_products_active ON products(active) WHERE active = true;
+CREATE INDEX IF NOT EXISTS idx_products_sku ON products(sku);
 
 -- ==========================================
 -- UPDATE INVOICES TABLE
@@ -354,11 +355,18 @@ ALTER TABLE invoices ADD COLUMN IF NOT EXISTS notes TEXT;
 ALTER TABLE invoices ALTER COLUMN stripe_invoice_id DROP NOT NULL;
 
 -- Add constraint for invoice_number format
-ALTER TABLE invoices ADD CONSTRAINT invoices_invoice_number_format 
-  CHECK (invoice_number ~ '^INV-[0-9]{4}-[0-9]{3,}$');
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'invoices_invoice_number_format'
+  ) THEN
+    ALTER TABLE invoices ADD CONSTRAINT invoices_invoice_number_format 
+      CHECK (invoice_number ~ '^INV-[0-9]{4}-[0-9]{3,}$');
+  END IF;
+END $$;
 
 -- Add index for invoice number lookups
-CREATE INDEX idx_invoices_invoice_number ON invoices(invoice_number);
+CREATE INDEX IF NOT EXISTS idx_invoices_invoice_number ON invoices(invoice_number);
 
 -- ==========================================
 -- HELPER FUNCTIONS
@@ -402,6 +410,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+DROP TRIGGER IF EXISTS update_products_updated_at ON products;
 CREATE TRIGGER update_products_updated_at
   BEFORE UPDATE ON products
   FOR EACH ROW
@@ -432,17 +442,21 @@ ON CONFLICT (sku) DO NOTHING;
 -- ==========================================
 
 -- Create shipment status enum for type safety
-CREATE TYPE shipment_status AS ENUM (
-  'pending',
-  'label_created',
-  'picked_up',
-  'in_transit',
-  'out_for_delivery',
-  'delivered',
-  'exception',
-  'cancelled',
-  'returned'
-);
+DO $$ BEGIN
+  CREATE TYPE shipment_status AS ENUM (
+    'pending',
+    'label_created',
+    'picked_up',
+    'in_transit',
+    'out_for_delivery',
+    'delivered',
+    'exception',
+    'cancelled',
+    'returned'
+  );
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- ==========================================
 -- ALTER EXISTING TABLES
@@ -549,7 +563,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Create trigger for automatic timeline updates
-DROP TRIGGER IF NOT EXISTS trigger_shipment_delivery ON shipments;
+DROP TRIGGER IF EXISTS trigger_shipment_delivery ON shipments;
 CREATE TRIGGER trigger_shipment_delivery
   AFTER UPDATE ON shipments
   FOR EACH ROW
@@ -693,7 +707,7 @@ JOIN customers c ON s.customer_id = c.id;
 -- Invoices
 CREATE INDEX IF NOT EXISTS idx_invoices_paid_date ON invoices(paid_date) WHERE status = 'paid';
 CREATE INDEX IF NOT EXISTS idx_invoices_due_date ON invoices(due_date) WHERE status IN ('sent', 'overdue');
-CREATE INDEX IF NOT EXISTS idx_invoices_created_month ON invoices(DATE_TRUNC('month', created_at));
+CREATE INDEX IF NOT EXISTS idx_invoices_created_at ON invoices(created_at);
 
 -- Deals
 CREATE INDEX IF NOT EXISTS idx_deals_stage_value ON deals(stage, value) WHERE closed_at IS NULL;
@@ -705,7 +719,7 @@ CREATE INDEX IF NOT EXISTS idx_shipments_status_date ON shipments(status, shippe
 CREATE INDEX IF NOT EXISTS idx_shipments_delivered_date ON shipments(delivered_date) WHERE delivered_date IS NOT NULL;
 
 -- Timeline
-CREATE INDEX IF NOT EXISTS idx_timeline_created_month ON customer_timeline(DATE_TRUNC('month', created_at));
+CREATE INDEX IF NOT EXISTS idx_timeline_created_at ON customer_timeline(created_at);
 
 -- ==========================================
 -- HELPER FUNCTIONS
@@ -804,6 +818,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+DROP TRIGGER IF EXISTS email_templates_updated_at ON email_templates;
 CREATE TRIGGER email_templates_updated_at
   BEFORE UPDATE ON email_templates
   FOR EACH ROW
@@ -1029,14 +1045,22 @@ ALTER TABLE company_settings ENABLE ROW LEVEL SECURITY;
 
 -- Create policies
 -- Allow authenticated users to view company settings
-CREATE POLICY "Authenticated users can view company settings" ON company_settings
-    FOR SELECT
-    USING (auth.role() = 'authenticated');
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'company_settings' AND policyname = 'Authenticated users can view company settings'
+  ) THEN
+    EXECUTE 'CREATE POLICY "Authenticated users can view company settings" ON company_settings FOR SELECT USING (auth.role() = ''authenticated'')';
+  END IF;
+END $$;
 
 -- Allow authenticated users to update company settings (simplified for now, ideally restricted to admins)
-CREATE POLICY "Authenticated users can update company settings" ON company_settings
-    FOR UPDATE
-    USING (auth.role() = 'authenticated');
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'company_settings' AND policyname = 'Authenticated users can update company settings'
+  ) THEN
+    EXECUTE 'CREATE POLICY "Authenticated users can update company settings" ON company_settings FOR UPDATE USING (auth.role() = ''authenticated'')';
+  END IF;
+END $$;
 
 -- Insert default row if not exists
 INSERT INTO company_settings (name)
