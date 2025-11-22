@@ -10,7 +10,10 @@ import {
     BarChart3,
     Settings,
     LogOut,
-    Cat
+    Cat,
+    Package,
+    FileText,
+    Send
 } from "lucide-react"
 
 import {
@@ -45,24 +48,42 @@ const items = [
         icon: Trello,
     },
     {
+        title: "Products",
+        url: "/products",
+        icon: Package,
+    },
+    {
         title: "Communication",
         url: "/dashboard/communication",
         icon: MessageSquare,
     },
     {
         title: "Invoices",
-        url: "/dashboard/invoices",
+        url: "/invoices",
         icon: CreditCard,
     },
     {
-        title: "Shipping",
-        url: "/dashboard/shipping",
+        title: "Shipments",
+        url: "/shipments",
         icon: Truck,
     },
     {
         title: "Reports",
         url: "/dashboard/reports",
         icon: BarChart3,
+    },
+]
+
+const emailItems = [
+    {
+        title: "Templates",
+        url: "/templates",
+        icon: FileText,
+    },
+    {
+        title: "Campaigns",
+        url: "/campaigns",
+        icon: Send,
     },
 ]
 
@@ -92,6 +113,23 @@ export function AppSidebar() {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {items.map((item) => (
+                                <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuButton asChild tooltip={item.title}>
+                                        <a href={item.url}>
+                                            <item.icon />
+                                            <span>{item.title}</span>
+                                        </a>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+                <SidebarGroup>
+                    <SidebarGroupLabel>Email Marketing</SidebarGroupLabel>
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            {emailItems.map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild tooltip={item.title}>
                                         <a href={item.url}>

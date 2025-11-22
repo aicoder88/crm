@@ -4,14 +4,16 @@ A custom CRM built for Purrify cat litter odor control - managing B2B relationsh
 
 ## Tech Stack
 
-- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS
-- **UI**: shadcn/ui (dark mode with Purrify branding)
-- **Database**: Supabase (PostgreSQL)
+- **Frontend**: Next.js 16 (App Router, Turbopack), React 19, TypeScript
+- **UI**: shadcn/ui with Radix UI primitives, Tailwind CSS 4 (dark mode)
+- **Database**: Supabase (PostgreSQL with Row Level Security)
 - **Auth**: Supabase Auth
-- **Payments**: Stripe (Invoicing API)
+- **Payments**: Stripe (Invoicing API & Webhooks)
 - **Shipping**: NetParcel API
-- **Email**: Resend
-- **Hosting**: Vercel
+- **Email**: Resend (with webhook tracking)
+- **Charts**: Recharts
+- **Forms**: React Hook Form with Zod validation
+- **Hosting**: Vercel (recommended)
 
 ## Getting Started
 
@@ -54,21 +56,63 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ## Features
 
-### Phase 1 (Current)
-- ✅ Dark mode UI with Purrify branding
+### Completed Phases
+
+#### Phase I - Core CRM
+- ✅ Dark mode UI with Purrify  branding
 - ✅ Customer management (CRUD)
 - ✅ CSV import for existing data
 - ✅ Search and filtering
-- 🚧 Authentication
+- ✅ Authentication with Supabase Auth
 
-### Upcoming Phases
-- Phase 2: Enhanced customer management (contacts, tags, social media)
-- Phase 3: Communication hub (calls, tasks, timeline)
-- Phase 4: Sales pipeline (Kanban board)
-- Phase 5: Invoicing & Stripe integration
-- Phase 6: Shipping & NetParcel integration
-- Phase 7: Gmail API & analytics dashboards
-- Phase 8: AI features (note summarization)
+#### Phase II - Enhanced Customer Management
+- ✅ Multiple contacts per customer
+- ✅ Tag management system
+- ✅ Social media profile tracking
+- ✅ Advanced customer segmentation
+
+#### Phase III - Communication Hub
+- ✅ Call logging and tracking
+- ✅ Task management with priorities
+- ✅ Activity timeline with structured events
+- ✅ Follow-up scheduling
+
+#### Phase IV - Sales Pipeline
+- ✅ Kanban board for deal management
+- ✅ Customizable pipeline stages
+- ✅ Win probability tracking
+- ✅ Deal value forecasting
+
+#### Phase V - Invoicing & Payments
+- ✅ Product catalog management
+- ✅ Invoice creation and tracking
+- ✅ Stripe integration for payments
+- ✅ Automated invoice numbering
+
+#### Phase VI - Shipping & Fulfillment
+- ✅ NetParcel API integration
+- ✅ Shipment tracking
+- ✅ Label generation
+- ✅ Delivery status updates
+
+#### Phase VII - Analytics & Reporting
+- ✅ Sales dashboards with KPIs
+- ✅ Customer analytics (RFM analysis)
+- ✅ Financial reporting
+- ✅ Operational metrics with Recharts
+
+#### Phase VIII - Email Integration
+- ✅ Resend email service integration
+- ✅ Email template editor
+- ✅ Campaign management
+- ✅ Email tracking (opens, clicks)
+- ✅ Automated notifications
+
+#### Phase IX - Settings & Administration
+- ✅ Company settings management
+- ✅ Tax and currency configuration
+- ✅ User profile management
+- ✅ Team settings
 
 ## Project Structure
 

@@ -1,54 +1,87 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, DollarSign, CreditCard, Activity } from "lucide-react"
+'use client';
+
+import { MetricCard } from "@/components/analytics/metric-card";
+import { BarChart } from "@/components/analytics/bar-chart";
+import { Users, DollarSign, CreditCard, TrendingUp } from "lucide-react";
+import { useDashboardMetrics, useFinancialAnalytics } from "@/hooks/use-analytics";
 
 export default function DashboardPage() {
+    const { metrics, loading: metricsLoading } = useDashboardMetrics(30);
+    const { analytics, loading: analyticsLoading } = useFinancialAnalytics();
+
     return (
         <div className="flex flex-1 flex-col gap-4">
-            <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Total Customers
-                        </CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">1,181</div>
-                        <p className="text-xs text-muted-foreground">
-                            +20.1% from last month
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Active Deals
-                        </CardTitle>
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">+2350</div>
-                        <p className="text-xs text-muted-foreground">
-                            +180.1% from last month
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Pending Invoices
-                        </CardTitle>
-                        <CreditCard className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">$12,234</div>
-                        <p className="text-xs text-muted-foreground">
-                            +19% from last month
-                        </p>
-                    </CardContent>
-                </Card>
+            <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <MetricCard
+                    title="Total Customers"
+                    value={metrics?.totalCustomers.toLocaleString() || '0'}
+                    change={metrics?.customerGrowth}
+                    changeLabel="vs last 30 days"
+                    icon={Users}
+                    loading={metricsLoading}
+                />
+                <MetricCard
+                    title="Active Deals"
+                    value={metrics?.activeDeals.toLocaleString() || '0'}
+                    change={metrics?.dealGrowth}
+                    changeLabel="vs last 30 days"
+                    icon={TrendingUp}
+                    loading={metricsLoading}
+                    valueClassName="text-xl md:text-2xl"
+                />
+                <MetricCard
+                    title="Monthly Revenue"
+                    value={`$${metrics?.monthlyRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}`}
+                    change={metrics?.revenueGrowth}
+                    changeLabel="vs last 30 days"
+                    icon={DollarSign}
+                    loading={metricsLoading}
+                    valueClassName="text-xl md:text-2xl"
+                />
+                <MetricCard
+                    title="Outstanding Invoices"
+                    value={`$${metrics?.outstandingAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}`}
+                    icon={CreditCard}
+                    loading={metricsLoading}
+                    valueClassName="text-xl md:text-2xl"
+                />
             </div>
-            <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+
+            <div className="grid gap-4 md:grid-cols-2">
+                <BarChart
+                    title="Revenue Trend"
+                    description="Monthly revenue over the last 12 months"
+                    data={analytics?.revenueByMonth.slice(-12).map(item => ({
+                        month: item.period,
+                        revenue: Math.round(item.revenue),
+                        invoices: item.invoiceCount
+                    })) || []}
+                    xKey="month"
+                    bars={[
+                        { dataKey: 'revenue', fill: '#8b5cf6', name: 'Revenue ($)' },
+                    ]}
+                    height={300}
+                    loading={analyticsLoading}
+                />
+
+                <BarChart
+                    title="Invoice Aging"
+                    description="Outstanding invoices by aging bucket"
+                    data={analytics ? [
+                        { bucket: 'Current', amount: Math.round(analytics.invoiceAging.current) },
+                        { bucket: '1-30 days', amount: Math.round(analytics.invoiceAging.overdue30) },
+                        { bucket: '31-60 days', amount: Math.round(analytics.invoiceAging.overdue60) },
+                        { bucket: '61-90 days', amount: Math.round(analytics.invoiceAging.overdue90) },
+                        { bucket: '90+ days', amount: Math.round(analytics.invoiceAging.overdue90Plus) },
+                    ] : []}
+                    xKey="bucket"
+                    bars={[
+                        { dataKey: 'amount', fill: '#ef4444', name: 'Amount ($)' },
+                    ]}
+                    height={300}
+                    loading={analyticsLoading}
+                />
+            </div>
         </div>
-    )
+    );
 }

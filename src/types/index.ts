@@ -22,6 +22,17 @@ export interface Customer {
     contacts?: CustomerContact[];
 }
 
+export type ShipmentStatus =
+    | 'pending'
+    | 'label_created'
+    | 'picked_up'
+    | 'in_transit'
+    | 'out_for_delivery'
+    | 'delivered'
+    | 'exception'
+    | 'cancelled'
+    | 'returned';
+
 export interface Tag {
     id: string;
     name: string;
@@ -60,6 +71,11 @@ export interface TimelineEvent {
     email_subject: string | null;
     email_opened: boolean | null;
     email_thread_id: string | null;
+    email_message_id: string | null;
+    email_sent_to: string | null;
+    email_sent_from: string | null;
+    email_attachment_count: number | null;
+    email_clicked: boolean | null;
     deal_stage: string | null;
     deal_value: number | null;
     note_category: string | null;
@@ -113,4 +129,107 @@ export interface Deal {
     customer?: {
         store_name: string;
     };
+}
+
+export interface Product {
+    id: string;
+    sku: string;
+    name: string;
+    description: string | null;
+    unit_price: number;
+    currency: string;
+    active: boolean;
+    stripe_price_id: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Invoice {
+    id: string;
+    customer_id: string;
+    invoice_number: string;
+    order_number: string | null;
+    stripe_invoice_id: string | null;
+    subtotal: number;
+    tax: number;
+    shipping: number;
+    discount: number;
+    total: number;
+    amount: number; // Legacy field for backward compatibility
+    currency: string;
+    status: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
+    due_date: string | null;
+    sent_date: string | null;
+    paid_date: string | null;
+    pdf_url: string | null;
+    notes: string | null;
+    created_at: string;
+    customer?: {
+        store_name: string;
+        email: string | null;
+    };
+    items?: InvoiceItem[];
+    shipments?: Shipment[];
+}
+
+export interface InvoiceItem {
+    id: string;
+    invoice_id: string;
+    product_sku: string | null;
+    description: string | null;
+    quantity: number;
+    unit_price: number;
+    total: number;
+    created_at: string;
+    product?: Product;
+}
+
+export interface Shipment {
+    id: string;
+    customer_id: string;
+    invoice_id: string | null;
+    order_number: string | null;
+    carrier: string;
+    tracking_number: string | null;
+    status: ShipmentStatus;
+    shipped_date: string | null;
+    delivered_date: string | null;
+    estimated_delivery_date: string | null;
+    actual_weight: number | null;
+    billed_weight: number | null;
+    shipping_cost: number | null;
+    label_url: string | null;
+    package_count: number;
+    dimensions_length: number | null;
+    dimensions_width: number | null;
+    dimensions_height: number | null;
+    service_level: string | null;
+    notes: string | null;
+    created_at: string;
+    customer?: {
+        store_name: string;
+        city: string | null;
+        province: string | null;
+    };
+    invoice?: {
+        invoice_number: string;
+    };
+    events?: ShipmentEvent[];
+}
+
+export interface ShipmentEvent {
+    id: string;
+    shipment_id: string;
+    status: string;
+    message: string | null;
+    location: string | null;
+    timestamp: string;
+}
+
+export interface ShippingRate {
+    carrier: string;
+    service_level: string;
+    cost: number;
+    estimated_days: number;
+    currency: string;
 }

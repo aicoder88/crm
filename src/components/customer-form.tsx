@@ -44,7 +44,7 @@ const formSchema = z.object({
     province: z.string().optional(),
     postal_code: z.string().optional(),
     notes: z.string().optional(),
-    tags: z.array(z.string()).default([]),
+    tags: z.array(z.string()),
     facebook: z.string().url().optional().or(z.literal("")),
     instagram: z.string().url().optional().or(z.literal("")),
     tiktok: z.string().url().optional().or(z.literal("")),
@@ -54,7 +54,7 @@ const formSchema = z.object({
         role: z.string().optional(),
         email: z.string().email().optional().or(z.literal("")),
         phone: z.string().optional(),
-        is_primary: z.boolean().default(false),
+        is_primary: z.boolean().optional(),
     })).optional(),
 })
 
@@ -70,7 +70,7 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
     const [loading, setLoading] = useState(false)
     const supabase = createClient()
 
-    const defaultValues: Partial<CustomerFormValues> = initialData ? {
+    const defaultValues: CustomerFormValues = initialData ? {
         store_name: initialData.store_name || "",
         status: initialData.status || "Qualified",
         type: initialData.type || "B2B",
@@ -513,8 +513,8 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                             <FormLabel>Manage Tags</FormLabel>
                                             <FormControl>
                                                 <TagSelector
-                                                    selectedTagIds={field.value}
-                                                    onTagsChange={field.onChange}
+                                                    value={field.value}
+                                                    onChange={field.onChange}
                                                 />
                                             </FormControl>
                                             <FormMessage />

@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from "react"
 import { useTasks } from "@/hooks/useTasks"
 import { Button } from "@/components/ui/button"

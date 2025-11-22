@@ -1,3 +1,5 @@
+'use client';
+
 import { createClient } from "@/lib/supabase/client"
 import { Task } from "@/types"
 import { useState, useEffect } from "react"

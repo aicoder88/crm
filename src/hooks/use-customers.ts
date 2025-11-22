@@ -4,7 +4,7 @@ import { Customer } from '@/types';
 import { toast } from 'sonner';
 
 export function useCustomers() {
-    const [customers, setCustomers] = useState<Customer[]>([]);
+    const [customers, setCustomers] = useState<Pick<Customer, 'id' | 'store_name'>[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
