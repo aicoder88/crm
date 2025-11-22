@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
+import { PageTransition } from "@/components/layout/PageTransition";
 
 export default function RootLayout({
   children,
@@ -35,8 +36,10 @@ export default function RootLayout({
           <AppSidebar />
           <SidebarInset>
             <Header />
-            <main className="flex-1 p-6">
-              {children}
+            <main className="flex-1 p-6 overflow-hidden">
+              <PageTransition>
+                {children}
+              </PageTransition>
             </main>
           </SidebarInset>
         </SidebarProvider>
