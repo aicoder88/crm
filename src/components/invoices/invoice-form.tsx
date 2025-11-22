@@ -14,10 +14,13 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Customer, Product } from '@/types';
-import { Plus, Trash2, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Loader2, Receipt, Calendar, User, FileText } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { getProvincialTaxRate, generateInvoiceNumber } from '@/lib/invoice-utils';
 import { toast } from 'sonner';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface InvoiceFormProps {
     onSuccess?: () => void;
@@ -166,225 +169,278 @@ export function InvoiceForm({ onSuccess, onCancel }: InvoiceFormProps) {
     if (loading) {
         return (
             <div className="flex items-center justify-center p-8">
-                <Loader2 className="h-8 w-8 animate-spin" />
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
         );
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Customer Selection */}
-            <div className="space-y-2">
-                <Label htmlFor="customer_id">Customer *</Label>
-                <Select
-                    value={watch('customer_id')}
-                    onValueChange={(value) => {
-                        setValue('customer_id', value);
-                        const customer = customers.find(c => c.id === value);
-                        setSelectedCustomer(customer || null);
-                    }}
-                >
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select a customer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {customers.map(customer => (
-                            <SelectItem key={customer.id} value={customer.id}>
-                                {customer.store_name} {customer.city && `(${customer.city})`}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-                {errors.customer_id && (
-                    <p className="text-sm text-red-600">Customer is required</p>
-                )}
-            </div>
-
-            {/* Line Items */}
-            <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                    <Label>Line Items *</Label>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => append({ product_sku: null, description: '', quantity: 1, unit_price: 0 })}
-                    >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Item
-                    </Button>
-                </div>
-
-                {fields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-12 gap-2 items-start border p-3 rounded-md">
-                        <div className="col-span-3">
-                            <Label className="text-xs">Product</Label>
+        <Card className="glass-card border-none shadow-2xl">
+            <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                    <Receipt className="h-6 w-6 text-primary" />
+                    Create New Invoice
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                    {/* Customer Selection */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <Label htmlFor="customer_id" className="flex items-center gap-2">
+                                <User className="h-4 w-4 text-muted-foreground" />
+                                Customer
+                            </Label>
                             <Select
-                                value={watchItems[index]?.product_sku || ''}
+                                value={watch('customer_id')}
                                 onValueChange={(value) => {
-                                    const product = products.find(p => p.sku === value);
-                                    if (product) {
-                                        setValue(`items.${index}.product_sku`, product.sku);
-                                        setValue(`items.${index}.description`, product.name);
-                                        setValue(`items.${index}.unit_price`, product.unit_price);
-                                    }
+                                    setValue('customer_id', value);
+                                    const customer = customers.find(c => c.id === value);
+                                    setSelectedCustomer(customer || null);
                                 }}
                             >
-                                <SelectTrigger className="h-9">
-                                    <SelectValue placeholder="Select product" />
+                                <SelectTrigger className="glass-input">
+                                    <SelectValue placeholder="Select a customer" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {products.map(product => (
-                                        <SelectItem key={product.sku} value={product.sku}>
-                                            {product.sku} - {product.name}
+                                    {customers.map(customer => (
+                                        <SelectItem key={customer.id} value={customer.id}>
+                                            {customer.store_name} {customer.city && `(${customer.city})`}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
-                        </div>
-
-                        <div className="col-span-4">
-                            <Label className="text-xs">Description</Label>
-                            <Input
-                                {...register(`items.${index}.description`, { required: true })}
-                                placeholder="Item description"
-                                className="h-9"
-                            />
-                        </div>
-
-                        <div className="col-span-2">
-                            <Label className="text-xs">Quantity</Label>
-                            <Input
-                                type="number"
-                                {...register(`items.${index}.quantity`, { required: true, min: 1, valueAsNumber: true })}
-                                className="h-9"
-                            />
-                        </div>
-
-                        <div className="col-span-2">
-                            <Label className="text-xs">Unit Price</Label>
-                            <Input
-                                type="number"
-                                step="0.01"
-                                {...register(`items.${index}.unit_price`, { required: true, min: 0, valueAsNumber: true })}
-                                className="h-9"
-                            />
-                        </div>
-
-                        <div className="col-span-1 flex items-end">
-                            {fields.length > 1 && (
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => remove(index)}
-                                    className="h-9"
-                                >
-                                    <Trash2 className="h-4 w-4 text-red-600" />
-                                </Button>
+                            {errors.customer_id && (
+                                <p className="text-sm text-destructive font-medium">Customer is required</p>
                             )}
                         </div>
-                    </div>
-                ))}
-            </div>
 
-            {/* Calculations */}
-            <div className="space-y-2 border-t pt-4">
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <Label htmlFor="shipping">Shipping</Label>
-                        <Input
-                            id="shipping"
-                            type="number"
-                            step="0.01"
-                            {...register('shipping', { valueAsNumber: true })}
-                        />
+                        <div className="space-y-2">
+                            <Label htmlFor="due_date" className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4 text-muted-foreground" />
+                                Due Date
+                            </Label>
+                            <Input
+                                id="due_date"
+                                type="date"
+                                {...register('due_date')}
+                                className="glass-input"
+                            />
+                        </div>
                     </div>
-                    <div>
-                        <Label htmlFor="discount">Discount</Label>
-                        <Input
-                            id="discount"
-                            type="number"
-                            step="0.01"
-                            {...register('discount', { valueAsNumber: true })}
-                        />
-                    </div>
-                </div>
 
-                <div className="space-y-1 text-sm">
-                    <div className="flex justify-between">
-                        <span>Subtotal:</span>
-                        <span className="font-medium">${subtotal.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span>Tax ({taxRate}%):</span>
-                        <span className="font-medium">${tax.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span>Shipping:</span>
-                        <span className="font-medium">${(watchShipping || 0).toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span>Discount:</span>
-                        <span className="font-medium text-red-600">-${(watchDiscount || 0).toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-lg font-bold border-t pt-2">
-                        <span>Total:</span>
-                        <span>${total.toFixed(2)}</span>
-                    </div>
-                </div>
-            </div>
+                    <Separator className="bg-border/50" />
 
-            {/* Additional Fields */}
-            <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <Label htmlFor="due_date">Due Date</Label>
-                    <Input
-                        id="due_date"
-                        type="date"
-                        {...register('due_date')}
-                    />
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
-                    <Select value={watch('status')} onValueChange={(value: any) => setValue('status', value)}>
-                        <SelectTrigger>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="draft">Draft</SelectItem>
-                            <SelectItem value="sent">Sent</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </div>
+                    {/* Line Items */}
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <Label className="text-lg font-semibold">Line Items</Label>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => append({ product_sku: null, description: '', quantity: 1, unit_price: 0 })}
+                                className="hover:bg-primary/10 hover:text-primary border-primary/20"
+                            >
+                                <Plus className="mr-2 h-4 w-4" />
+                                Add Item
+                            </Button>
+                        </div>
 
-            <div className="space-y-2">
-                <Label htmlFor="notes">Notes</Label>
-                <Textarea
-                    id="notes"
-                    {...register('notes')}
-                    rows={3}
-                    placeholder="Additional notes..."
-                />
-            </div>
+                        <div className="space-y-3">
+                            <AnimatePresence>
+                                {fields.map((field, index) => (
+                                    <motion.div
+                                        key={field.id}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        className="grid grid-cols-12 gap-4 items-start p-4 rounded-lg bg-card/30 border border-border/40 hover:border-primary/30 transition-colors"
+                                    >
+                                        <div className="col-span-12 md:col-span-4">
+                                            <Label className="text-xs text-muted-foreground mb-1.5 block">Product</Label>
+                                            <Select
+                                                value={watchItems[index]?.product_sku || ''}
+                                                onValueChange={(value) => {
+                                                    const product = products.find(p => p.sku === value);
+                                                    if (product) {
+                                                        setValue(`items.${index}.product_sku`, product.sku);
+                                                        setValue(`items.${index}.description`, product.name);
+                                                        setValue(`items.${index}.unit_price`, product.unit_price);
+                                                    }
+                                                }}
+                                            >
+                                                <SelectTrigger className="h-9 glass-input">
+                                                    <SelectValue placeholder="Select product" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {products.map(product => (
+                                                        <SelectItem key={product.sku} value={product.sku}>
+                                                            {product.sku} - {product.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
 
-            {/* Actions */}
-            <div className="flex justify-end space-x-2">
-                <Button type="button" variant="outline" onClick={onCancel} disabled={submitting}>
-                    Cancel
-                </Button>
-                <Button type="submit" disabled={submitting}>
-                    {submitting ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Creating...
-                        </>
-                    ) : (
-                        'Create Invoice'
-                    )}
-                </Button>
-            </div>
-        </form>
+                                        <div className="col-span-12 md:col-span-4">
+                                            <Label className="text-xs text-muted-foreground mb-1.5 block">Description</Label>
+                                            <Input
+                                                {...register(`items.${index}.description`, { required: true })}
+                                                placeholder="Item description"
+                                                className="h-9 glass-input"
+                                            />
+                                        </div>
+
+                                        <div className="col-span-5 md:col-span-1">
+                                            <Label className="text-xs text-muted-foreground mb-1.5 block">Qty</Label>
+                                            <Input
+                                                type="number"
+                                                {...register(`items.${index}.quantity`, { required: true, min: 1, valueAsNumber: true })}
+                                                className="h-9 glass-input text-center"
+                                            />
+                                        </div>
+
+                                        <div className="col-span-5 md:col-span-2">
+                                            <Label className="text-xs text-muted-foreground mb-1.5 block">Price</Label>
+                                            <Input
+                                                type="number"
+                                                step="0.01"
+                                                {...register(`items.${index}.unit_price`, { required: true, min: 0, valueAsNumber: true })}
+                                                className="h-9 glass-input text-right"
+                                            />
+                                        </div>
+
+                                        <div className="col-span-2 md:col-span-1 flex justify-end pt-7">
+                                            {fields.length > 1 && (
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => remove(index)}
+                                                    className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
+                        </div>
+                    </div>
+
+                    <Separator className="bg-border/50" />
+
+                    {/* Calculations */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="notes" className="flex items-center gap-2">
+                                    <FileText className="h-4 w-4 text-muted-foreground" />
+                                    Notes
+                                </Label>
+                                <Textarea
+                                    id="notes"
+                                    {...register('notes')}
+                                    rows={4}
+                                    placeholder="Additional notes for the customer..."
+                                    className="glass-input resize-none"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="status">Status</Label>
+                                <Select value={watch('status')} onValueChange={(value: any) => setValue('status', value)}>
+                                    <SelectTrigger className="glass-input">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="draft">Draft</SelectItem>
+                                        <SelectItem value="sent">Sent</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="bg-card/30 rounded-lg p-6 space-y-4 border border-border/40">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <Label htmlFor="shipping" className="text-xs text-muted-foreground">Shipping</Label>
+                                    <Input
+                                        id="shipping"
+                                        type="number"
+                                        step="0.01"
+                                        {...register('shipping', { valueAsNumber: true })}
+                                        className="glass-input text-right h-9"
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="discount" className="text-xs text-muted-foreground">Discount</Label>
+                                    <Input
+                                        id="discount"
+                                        type="number"
+                                        step="0.01"
+                                        {...register('discount', { valueAsNumber: true })}
+                                        className="glass-input text-right h-9"
+                                    />
+                                </div>
+                            </div>
+
+                            <Separator className="bg-border/50" />
+
+                            <div className="space-y-2 text-sm">
+                                <div className="flex justify-between text-muted-foreground">
+                                    <span>Subtotal</span>
+                                    <span>${subtotal.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between text-muted-foreground">
+                                    <span>Tax ({taxRate}%)</span>
+                                    <span>${tax.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between text-muted-foreground">
+                                    <span>Shipping</span>
+                                    <span>${(watchShipping || 0).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between text-emerald-500">
+                                    <span>Discount</span>
+                                    <span>-${(watchDiscount || 0).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between text-xl font-bold pt-2 text-primary">
+                                    <span>Total</span>
+                                    <span>${total.toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex justify-end space-x-4 pt-4">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={onCancel}
+                            disabled={submitting}
+                            className="border-primary/20 hover:bg-primary/5"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="submit"
+                            disabled={submitting}
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
+                        >
+                            {submitting ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Creating...
+                                </>
+                            ) : (
+                                'Create Invoice'
+                            )}
+                        </Button>
+                    </div>
+                </form>
+            </CardContent>
+        </Card>
     );
 }
