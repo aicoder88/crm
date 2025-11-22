@@ -24,10 +24,11 @@ import { Textarea } from "@/components/ui/textarea"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { Loader2, Plus, Trash2 } from "lucide-react"
+import { Loader2, Plus, Trash2, Store, MapPin, Users, Tag, Share2 } from "lucide-react"
 import { TagSelector } from "./tag-selector"
 import { Customer } from "@/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 
 const formSchema = z.object({
     store_name: z.string().min(2, {
@@ -216,9 +217,12 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-8">
                         {/* Main Customer Info */}
-                        <Card>
+                        <Card className="glass-card border-none shadow-lg">
                             <CardHeader>
-                                <CardTitle>Basic Information</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                                    <Store className="h-5 w-5 text-primary" />
+                                    Basic Information
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <FormField
@@ -226,9 +230,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="store_name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Store Name</FormLabel>
+                                            <FormLabel className="text-muted-foreground">Store Name</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Pet Valu - Downtown" {...field} />
+                                                <Input placeholder="Pet Valu - Downtown" {...field} className="glass-input" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -239,9 +243,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="owner_manager_name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Owner/Manager Name</FormLabel>
+                                            <FormLabel className="text-muted-foreground">Owner/Manager Name</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="John Doe" {...field} />
+                                                <Input placeholder="John Doe" {...field} className="glass-input" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -252,10 +256,10 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="status"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Status</FormLabel>
+                                            <FormLabel className="text-muted-foreground">Status</FormLabel>
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
-                                                    <SelectTrigger>
+                                                    <SelectTrigger className="glass-input">
                                                         <SelectValue placeholder="Select a status" />
                                                     </SelectTrigger>
                                                 </FormControl>
@@ -276,10 +280,10 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="type"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Type</FormLabel>
+                                            <FormLabel className="text-muted-foreground">Type</FormLabel>
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
-                                                    <SelectTrigger>
+                                                    <SelectTrigger className="glass-input">
                                                         <SelectValue placeholder="Select a type" />
                                                     </SelectTrigger>
                                                 </FormControl>
@@ -298,9 +302,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="email"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Email</FormLabel>
+                                            <FormLabel className="text-muted-foreground">Email</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="contact@example.com" {...field} />
+                                                <Input placeholder="contact@example.com" {...field} className="glass-input" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -311,9 +315,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="phone"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Phone</FormLabel>
+                                            <FormLabel className="text-muted-foreground">Phone</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="(555) 123-4567" {...field} />
+                                                <Input placeholder="(555) 123-4567" {...field} className="glass-input" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -324,9 +328,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="website"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Website</FormLabel>
+                                            <FormLabel className="text-muted-foreground">Website</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="https://example.com" {...field} />
+                                                <Input placeholder="https://example.com" {...field} className="glass-input" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -336,9 +340,12 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                         </Card>
 
                         {/* Address */}
-                        <Card>
+                        <Card className="glass-card border-none shadow-lg">
                             <CardHeader>
-                                <CardTitle>Address</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                                    <MapPin className="h-5 w-5 text-primary" />
+                                    Address
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <FormField
@@ -346,9 +353,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="street"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Street</FormLabel>
+                                            <FormLabel className="text-muted-foreground">Street</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="123 Main St" {...field} />
+                                                <Input placeholder="123 Main St" {...field} className="glass-input" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -359,9 +366,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="city"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>City</FormLabel>
+                                            <FormLabel className="text-muted-foreground">City</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Toronto" {...field} />
+                                                <Input placeholder="Toronto" {...field} className="glass-input" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -372,9 +379,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="province"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Province</FormLabel>
+                                            <FormLabel className="text-muted-foreground">Province</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="ON" {...field} />
+                                                <Input placeholder="ON" {...field} className="glass-input" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -385,9 +392,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="postal_code"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Postal Code</FormLabel>
+                                            <FormLabel className="text-muted-foreground">Postal Code</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="M5V 2T6" {...field} />
+                                                <Input placeholder="M5V 2T6" {...field} className="glass-input" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -397,22 +404,31 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                         </Card>
 
                         {/* Contacts */}
-                        <Card>
+                        <Card className="glass-card border-none shadow-lg">
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle>Contacts</CardTitle>
-                                <Button type="button" variant="outline" size="sm" onClick={() => append({ name: "", role: "", email: "", phone: "", is_primary: false })}>
+                                <CardTitle className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                                    <Users className="h-5 w-5 text-primary" />
+                                    Contacts
+                                </CardTitle>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => append({ name: "", role: "", email: "", phone: "", is_primary: false })}
+                                    className="border-primary/20 hover:bg-primary/10 hover:text-primary"
+                                >
                                     <Plus className="mr-2 h-4 w-4" />
                                     Add Contact
                                 </Button>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 {fields.map((field, index) => (
-                                    <div key={field.id} className="flex flex-col gap-4 p-4 border rounded-lg relative">
+                                    <div key={field.id} className="flex flex-col gap-4 p-4 rounded-lg bg-card/30 border border-border/40 hover:border-primary/30 transition-colors relative">
                                         <Button
                                             type="button"
                                             variant="ghost"
                                             size="icon"
-                                            className="absolute top-2 right-2 text-destructive"
+                                            className="absolute top-2 right-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                                             onClick={() => remove(index)}
                                         >
                                             <Trash2 className="h-4 w-4" />
@@ -423,9 +439,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                                 name={`contacts.${index}.name`}
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel>Name</FormLabel>
+                                                        <FormLabel className="text-xs text-muted-foreground">Name</FormLabel>
                                                         <FormControl>
-                                                            <Input placeholder="Contact Name" {...field} />
+                                                            <Input placeholder="Contact Name" {...field} className="glass-input h-9" />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -436,9 +452,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                                 name={`contacts.${index}.role`}
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel>Role</FormLabel>
+                                                        <FormLabel className="text-xs text-muted-foreground">Role</FormLabel>
                                                         <FormControl>
-                                                            <Input placeholder="Manager" {...field} />
+                                                            <Input placeholder="Manager" {...field} className="glass-input h-9" />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -449,9 +465,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                                 name={`contacts.${index}.email`}
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel>Email</FormLabel>
+                                                        <FormLabel className="text-xs text-muted-foreground">Email</FormLabel>
                                                         <FormControl>
-                                                            <Input placeholder="email@example.com" {...field} />
+                                                            <Input placeholder="email@example.com" {...field} className="glass-input h-9" />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -462,9 +478,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                                 name={`contacts.${index}.phone`}
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel>Phone</FormLabel>
+                                                        <FormLabel className="text-xs text-muted-foreground">Phone</FormLabel>
                                                         <FormControl>
-                                                            <Input placeholder="Phone" {...field} />
+                                                            <Input placeholder="Phone" {...field} className="glass-input h-9" />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -474,7 +490,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     </div>
                                 ))}
                                 {fields.length === 0 && (
-                                    <p className="text-sm text-muted-foreground text-center py-4">No contacts added yet.</p>
+                                    <div className="text-center py-8 border-2 border-dashed border-border/50 rounded-lg">
+                                        <p className="text-sm text-muted-foreground">No contacts added yet.</p>
+                                    </div>
                                 )}
                             </CardContent>
                         </Card>
@@ -484,11 +502,11 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                             name="notes"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Notes</FormLabel>
+                                    <FormLabel className="text-muted-foreground">Notes</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             placeholder="Add any notes here..."
-                                            className="resize-none"
+                                            className="glass-input resize-none min-h-[100px]"
                                             {...field}
                                         />
                                     </FormControl>
@@ -500,9 +518,12 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
 
                     <div className="space-y-8">
                         {/* Tags */}
-                        <Card>
+                        <Card className="glass-card border-none shadow-lg">
                             <CardHeader>
-                                <CardTitle>Tags</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                                    <Tag className="h-5 w-5 text-primary" />
+                                    Tags
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <FormField
@@ -510,7 +531,7 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="tags"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Manage Tags</FormLabel>
+                                            <FormLabel className="text-muted-foreground">Manage Tags</FormLabel>
                                             <FormControl>
                                                 <TagSelector
                                                     value={field.value}
@@ -525,9 +546,12 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                         </Card>
 
                         {/* Social Media */}
-                        <Card>
+                        <Card className="glass-card border-none shadow-lg">
                             <CardHeader>
-                                <CardTitle>Social Media</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                                    <Share2 className="h-5 w-5 text-primary" />
+                                    Social Media
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <FormField
@@ -535,9 +559,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="facebook"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Facebook</FormLabel>
+                                            <FormLabel className="text-muted-foreground">Facebook</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="https://facebook.com/..." {...field} />
+                                                <Input placeholder="https://facebook.com/..." {...field} className="glass-input" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -548,9 +572,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="instagram"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Instagram</FormLabel>
+                                            <FormLabel className="text-muted-foreground">Instagram</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="https://instagram.com/..." {...field} />
+                                                <Input placeholder="https://instagram.com/..." {...field} className="glass-input" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -561,9 +585,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="tiktok"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>TikTok</FormLabel>
+                                            <FormLabel className="text-muted-foreground">TikTok</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="https://tiktok.com/..." {...field} />
+                                                <Input placeholder="https://tiktok.com/..." {...field} className="glass-input" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -574,9 +598,9 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                                     name="youtube"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>YouTube</FormLabel>
+                                            <FormLabel className="text-muted-foreground">YouTube</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="https://youtube.com/..." {...field} />
+                                                <Input placeholder="https://youtube.com/..." {...field} className="glass-input" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -587,10 +611,16 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
                     </div>
                 </div>
 
-                <Button type="submit" disabled={loading} className="w-full md:w-auto">
-                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {customerId ? "Update Customer" : "Create Customer"}
-                </Button>
+                <div className="flex justify-end">
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
+                    >
+                        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {customerId ? "Update Customer" : "Create Customer"}
+                    </Button>
+                </div>
             </form>
         </Form>
     )

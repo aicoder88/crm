@@ -13,6 +13,7 @@ export function useTasks(customerId: string) {
     useEffect(() => {
         if (!customerId) return
         fetchTasks()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [customerId])
 
     async function fetchTasks() {

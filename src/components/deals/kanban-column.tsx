@@ -22,15 +22,15 @@ export function KanbanColumn({ stage, deals, onDealClick }: KanbanColumnProps) {
     const totalValue = deals.reduce((sum, deal) => sum + (deal.value || 0), 0);
 
     return (
-        <div className="flex flex-col h-full min-w-[300px] w-[300px] bg-muted/30 rounded-lg border p-2">
-            <div className="flex items-center justify-between p-2 mb-2">
+        <div className="flex flex-col h-full min-w-[300px] w-[300px] glass-card border-none rounded-xl p-2 bg-white/5 backdrop-blur-sm">
+            <div className="flex items-center justify-between p-3 mb-2 bg-white/5 rounded-lg border border-white/5">
                 <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-sm">{stage.name}</h3>
-                    <span className="px-2 py-0.5 rounded-full bg-muted text-xs font-medium">
+                    <h3 className="font-bold text-sm tracking-tight">{stage.name}</h3>
+                    <span className="flex items-center justify-center h-5 min-w-[20px] px-1.5 rounded-full bg-primary/20 text-primary text-[10px] font-bold">
                         {deals.length}
                     </span>
                 </div>
-                <div className="text-xs text-muted-foreground font-medium">
+                <div className="text-xs font-mono text-muted-foreground/80">
                     {new Intl.NumberFormat('en-US', {
                         style: 'currency',
                         currency: 'USD',
@@ -43,7 +43,7 @@ export function KanbanColumn({ stage, deals, onDealClick }: KanbanColumnProps) {
             <div
                 ref={setNodeRef}
                 className={cn(
-                    "flex-1 overflow-y-auto space-y-3 p-1 min-h-[100px]",
+                    "flex-1 overflow-y-auto space-y-3 p-1 min-h-[100px] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent",
                     // Add visual cue when dragging over
                 )}
             >

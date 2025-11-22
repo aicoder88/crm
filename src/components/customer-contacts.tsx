@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { CustomerContact } from "@/types"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, User, Phone, Mail, Star } from "lucide-react"
@@ -17,6 +17,8 @@ export function CustomerContacts({ customerId }: CustomerContactsProps) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        const supabase = createClient()
+
         async function fetchContacts() {
             const { data, error } = await supabase
                 .from("customer_contacts")

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { TimelineEvent } from "@/types"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Phone, Mail, FileText, DollarSign, Package, Calendar } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
@@ -16,6 +16,8 @@ export function CustomerTimeline({ customerId }: CustomerTimelineProps) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        const supabase = createClient()
+
         async function fetchTimeline() {
             const { data, error } = await supabase
                 .from("customer_timeline")

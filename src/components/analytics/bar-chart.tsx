@@ -30,7 +30,7 @@ export function BarChart({
 }: BarChartProps) {
     if (loading) {
         return (
-            <Card>
+            <Card className="glass-card border-none">
                 {title && (
                     <CardHeader>
                         <CardTitle>{title}</CardTitle>
@@ -48,7 +48,7 @@ export function BarChart({
 
     if (!data || data.length === 0) {
         return (
-            <Card>
+            <Card className="glass-card border-none">
                 {title && (
                     <CardHeader>
                         <CardTitle>{title}</CardTitle>
@@ -65,38 +65,69 @@ export function BarChart({
     }
 
     return (
-        <Card>
+        <Card className="glass-card border-none shadow-lg">
             {title && (
                 <CardHeader>
-                    <CardTitle>{title}</CardTitle>
+                    <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">{title}</CardTitle>
                     {description && <CardDescription>{description}</CardDescription>}
                 </CardHeader>
             )}
             <CardContent>
                 <ResponsiveContainer width="100%" height={height}>
                     <RechartsBarChart data={data} layout={layout}>
-                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-white/10" vertical={false} />
                         {layout === 'horizontal' ? (
                             <>
-                                <XAxis dataKey={xKey} className="text-xs" />
-                                <YAxis className="text-xs" />
+                                <XAxis
+                                    dataKey={xKey}
+                                    className="text-xs text-muted-foreground"
+                                    tick={{ fill: 'currentColor', opacity: 0.7 }}
+                                    axisLine={false}
+                                    tickLine={false}
+                                />
+                                <YAxis
+                                    className="text-xs text-muted-foreground"
+                                    tick={{ fill: 'currentColor', opacity: 0.7 }}
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tickFormatter={(value) => `$${value}`}
+                                />
                             </>
                         ) : (
                             <>
-                                <XAxis type="number" className="text-xs" />
-                                <YAxis dataKey={xKey} type="category" className="text-xs" />
+                                <XAxis type="number" className="text-xs" hide />
+                                <YAxis
+                                    dataKey={xKey}
+                                    type="category"
+                                    className="text-xs text-muted-foreground"
+                                    tick={{ fill: 'currentColor', opacity: 0.7 }}
+                                    axisLine={false}
+                                    tickLine={false}
+                                    width={100}
+                                />
                             </>
                         )}
                         <Tooltip
                             contentStyle={{
-                                backgroundColor: 'hsl(var(--card))',
-                                border: '1px solid hsl(var(--border))',
-                                borderRadius: '8px'
+                                backgroundColor: 'rgba(20, 20, 30, 0.8)',
+                                backdropFilter: 'blur(12px)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                borderRadius: '12px',
+                                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
+                                color: '#fff'
                             }}
+                            cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
                         />
                         <Legend />
-                        {bars.map((bar) => (
-                            <Bar key={bar.dataKey} dataKey={bar.dataKey} fill={bar.fill} name={bar.name} radius={[4, 4, 0, 0]} />
+                        {bars.map((bar, index) => (
+                            <Bar
+                                key={bar.dataKey}
+                                dataKey={bar.dataKey}
+                                fill={bar.fill}
+                                name={bar.name}
+                                radius={[4, 4, 4, 4]}
+                                animationDuration={1500}
+                            />
                         ))}
                     </RechartsBarChart>
                 </ResponsiveContainer>

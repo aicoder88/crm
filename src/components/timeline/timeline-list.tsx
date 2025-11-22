@@ -1,13 +1,16 @@
+'use client';
+
 import { useTimeline } from "@/hooks/useTimeline"
 import { TimelineItem } from "./timeline-item"
-import { Loader2 } from "lucide-react"
+import { Loader2, AlertCircle, RefreshCw } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 interface TimelineListProps {
     customerId: string
 }
 
 export function TimelineList({ customerId }: TimelineListProps) {
-    const { events, loading, error } = useTimeline(customerId)
+    const { events, loading, error, refresh } = useTimeline(customerId)
 
     if (loading) {
         return (
@@ -18,13 +21,28 @@ export function TimelineList({ customerId }: TimelineListProps) {
     }
 
     if (error) {
-        return <div className="text-red-500 p-4">Error loading timeline: {error}</div>
+        return (
+            <div className="space-y-4 p-4 text-center">
+                <div className="flex justify-center">
+                    <AlertCircle className="h-8 w-8 text-destructive" />
+                </div>
+                <div className="space-y-2">
+                    <p className="text-sm font-medium">Failed to load timeline</p>
+                    <p className="text-xs text-muted-foreground">{error}</p>
+                </div>
+                <Button onClick={refresh} variant="outline" size="sm">
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Try Again
+                </Button>
+            </div>
+        )
     }
 
     if (events.length === 0) {
         return (
             <div className="text-center p-8 text-muted-foreground border rounded-lg border-dashed">
-                No activity yet.
+                <p className="text-sm">No activity yet.</p>
+                <p className="text-xs mt-1">Activity will appear here as you interact with this customer.</p>
             </div>
         )
     }

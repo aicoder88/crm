@@ -89,18 +89,18 @@ const emailItems = [
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon">
-            <SidebarHeader>
+        <Sidebar collapsible="icon" className="border-r border-white/5 bg-background/60 backdrop-blur-xl">
+            <SidebarHeader className="border-b border-white/5 pb-4">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
+                        <SidebarMenuButton size="lg" asChild className="hover:bg-white/5 active:bg-white/10 transition-colors">
                             <a href="/dashboard">
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-purple-600 text-primary-foreground shadow-lg shadow-primary/20">
                                     <Cat className="size-4" />
                                 </div>
                                 <div className="flex flex-col gap-0.5 leading-none">
-                                    <span className="font-semibold">Purrify CRM</span>
-                                    <span className="">v1.0.0</span>
+                                    <span className="font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">Purrify CRM</span>
+                                    <span className="text-xs text-muted-foreground">v1.0.0</span>
                                 </div>
                             </a>
                         </SidebarMenuButton>
@@ -109,12 +109,12 @@ export function AppSidebar() {
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Application</SidebarGroupLabel>
+                    <SidebarGroupLabel className="text-muted-foreground/70">Application</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild tooltip={item.title}>
+                                    <SidebarMenuButton asChild tooltip={item.title} className="hover:bg-white/5 hover:text-primary transition-all duration-200">
                                         <a href={item.url}>
                                             <item.icon />
                                             <span>{item.title}</span>
@@ -126,12 +126,12 @@ export function AppSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Email Marketing</SidebarGroupLabel>
+                    <SidebarGroupLabel className="text-muted-foreground/70">Email Marketing</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {emailItems.map((item) => (
                                 <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild tooltip={item.title}>
+                                    <SidebarMenuButton asChild tooltip={item.title} className="hover:bg-white/5 hover:text-primary transition-all duration-200">
                                         <a href={item.url}>
                                             <item.icon />
                                             <span>{item.title}</span>
@@ -143,10 +143,10 @@ export function AppSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
-            <SidebarFooter>
+            <SidebarFooter className="border-t border-white/5 pt-4">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton asChild tooltip="Settings">
+                        <SidebarMenuButton asChild tooltip="Settings" className="hover:bg-white/5 transition-colors">
                             <a href="/dashboard/settings">
                                 <Settings />
                                 <span>Settings</span>
@@ -154,7 +154,7 @@ export function AppSidebar() {
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                        <SidebarMenuButton className="text-destructive hover:text-destructive" tooltip="Log out">
+                        <SidebarMenuButton className="text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors" tooltip="Log out">
                             <a href="/auth/logout">
                                 <LogOut />
                                 <span>Log out</span>

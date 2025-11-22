@@ -41,6 +41,7 @@ export function useTimeline(customerId: string) {
         return () => {
             supabase.removeChannel(channel)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [customerId])
 
     async function fetchEvents() {

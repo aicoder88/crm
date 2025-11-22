@@ -28,37 +28,42 @@ export function MetricCard({
     const isNeutral = change !== undefined && change === 0;
 
     return (
-        <Card className={className}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{title}</CardTitle>
-                {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
+        <Card className={cn("glass-card border-none shadow-lg overflow-hidden relative group", className)}>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+                {Icon && (
+                    <div className="p-2 rounded-full bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors">
+                        <Icon className="h-4 w-4" />
+                    </div>
+                )}
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative z-10">
                 {loading ? (
                     <div className="flex items-center space-x-2">
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 animate-spin text-primary" />
                         <span className="text-sm text-muted-foreground">Loading...</span>
                     </div>
                 ) : (
                     <>
-                        <div className={cn('text-2xl font-bold', valueClassName)}>{value}</div>
+                        <div className={cn('text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent', valueClassName)}>{value}</div>
                         {change !== undefined && (
                             <div className="mt-1 flex items-center text-xs">
-                                {isPositive && <ArrowUp className="mr-1 h-3 w-3 text-green-600" />}
-                                {isNegative && <ArrowDown className="mr-1 h-3 w-3 text-red-600" />}
-                                {isNeutral && <Minus className="mr-1 h-3 w-3 text-gray-600" />}
+                                {isPositive && <ArrowUp className="mr-1 h-3 w-3 text-emerald-500" />}
+                                {isNegative && <ArrowDown className="mr-1 h-3 w-3 text-rose-500" />}
+                                {isNeutral && <Minus className="mr-1 h-3 w-3 text-gray-500" />}
                                 <span
                                     className={cn(
                                         'font-medium',
-                                        isPositive && 'text-green-600',
-                                        isNegative && 'text-red-600',
-                                        isNeutral && 'text-gray-600'
+                                        isPositive && 'text-emerald-500',
+                                        isNegative && 'text-rose-500',
+                                        isNeutral && 'text-gray-500'
                                     )}
                                 >
                                     {change > 0 && '+'}
                                     {change.toFixed(1)}%
                                 </span>
-                                <span className="ml-1 text-muted-foreground">{changeLabel}</span>
+                                <span className="ml-1 text-muted-foreground/70">{changeLabel}</span>
                             </div>
                         )}
                     </>

@@ -10,8 +10,8 @@ export default function DashboardPage() {
     const { analytics, loading: analyticsLoading } = useFinancialAnalytics();
 
     return (
-        <div className="flex flex-1 flex-col gap-4">
-            <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="flex flex-1 flex-col gap-6 p-4">
+            <div className="grid auto-rows-min gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <MetricCard
                     title="Total Customers"
                     value={metrics?.totalCustomers.toLocaleString() || '0'}
@@ -47,7 +47,7 @@ export default function DashboardPage() {
                 />
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
                 <BarChart
                     title="Revenue Trend"
                     description="Monthly revenue over the last 12 months"
@@ -58,9 +58,9 @@ export default function DashboardPage() {
                     })) || []}
                     xKey="month"
                     bars={[
-                        { dataKey: 'revenue', fill: '#8b5cf6', name: 'Revenue ($)' },
+                        { dataKey: 'revenue', fill: 'oklch(0.65 0.22 264)', name: 'Revenue ($)' }, // Primary Purple
                     ]}
-                    height={300}
+                    height={350}
                     loading={analyticsLoading}
                 />
 
@@ -76,9 +76,9 @@ export default function DashboardPage() {
                     ] : []}
                     xKey="bucket"
                     bars={[
-                        { dataKey: 'amount', fill: '#ef4444', name: 'Amount ($)' },
+                        { dataKey: 'amount', fill: 'oklch(0.637 0.237 25.331)', name: 'Amount ($)' }, // Destructive Red
                     ]}
-                    height={300}
+                    height={350}
                     loading={analyticsLoading}
                 />
             </div>
