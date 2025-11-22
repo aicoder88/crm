@@ -1,103 +1,106 @@
-@import "tailwindcss";
-
-:root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  /* Purrify Dark Theme - Deep Glass & Neon */
-  --background: oklch(0.10 0.02 285);
-  /* Deep rich purple-black */
-  --foreground: oklch(0.98 0 0);
-
-  /* Glassmorphism Cards - More transparent & refined */
-  --card: oklch(0.16 0.03 290 / 0.3);
-  /* 30% opacity for deeper glass */
-  --card-foreground: oklch(0.98 0 0);
-
-  --popover: oklch(0.12 0.03 290 / 0.9);
-  --popover-foreground: oklch(0.98 0 0);
-
-  /* Primary: Vibrant Neon Purple */
-  --primary: oklch(0.65 0.25 290);
-  --primary-foreground: oklch(1 0 0);
-
-  /* Secondary: Deep Violet */
-  --secondary: oklch(0.30 0.05 290 / 0.5);
-  --secondary-foreground: oklch(0.98 0 0);
-
-  /* Muted */
-  --muted: oklch(0.22 0.02 290 / 0.5);
-  --muted-foreground: oklch(0.70 0.02 290);
-
-  /* Accent: Electric Cyan */
-  --accent: oklch(0.75 0.18 180);
-  --accent-foreground: oklch(0.10 0.02 285);
-
-  --destructive: oklch(0.60 0.22 25);
-
-  /* Borders: Very subtle, almost invisible */
-  --border: oklch(1 0 0 / 0.08);
-  --input: oklch(1 0 0 / 0.08);
-  --ring: oklch(0.65 0.25 290);
-
-  /* Charts: Neon/Vibrant Palette */
-  --chart-1: oklch(0.65 0.25 290);
-  /* Neon Purple */
-  --chart-2: oklch(0.75 0.18 180);
-  /* Electric Cyan */
-  --chart-3: oklch(0.75 0.20 140);
-  /* Neon Green */
-  --chart-4: oklch(0.70 0.25 320);
-  /* Neon Pink */
-  --chart-5: oklch(0.80 0.20 50);
-  /* Neon Orange */
-
-  --sidebar: oklch(0.10 0.02 285 / 0.4);
-  /* Glass sidebar */
-  --sidebar-foreground: oklch(0.92 0 0);
-  --sidebar-primary: oklch(0.65 0.25 290);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(1 0 0 / 0.1);
-  --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(1 0 0 / 0.05);
-  --sidebar-ring: oklch(0.65 0.25 290);
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
+  :root {
+    --radius: 0.625rem;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --sidebar: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Purrify Dark Theme - Deep Glass & Neon (HSL values) */
+    --background: 260 20% 10%;
+    /* Deep rich purple-black */
+    --foreground: 0 0% 98%;
+
+    /* Glassmorphism Cards */
+    --card: 260 20% 16%;
+    /* 30% opacity handled in utility */
+    --card-foreground: 0 0% 98%;
+
+    --popover: 260 20% 12%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Primary: Vibrant Neon Purple */
+    --primary: 270 70% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Deep Violet */
+    --secondary: 260 30% 20%;
+    --secondary-foreground: 0 0% 98%;
+
+    /* Muted */
+    --muted: 260 20% 20%;
+    --muted-foreground: 260 10% 70%;
+
+    /* Accent: Electric Cyan */
+    --accent: 180 70% 50%;
+    --accent-foreground: 260 20% 10%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Borders */
+    --border: 260 20% 20%;
+    --input: 260 20% 20%;
+    --ring: 270 70% 60%;
+
+    /* Charts */
+    --chart-1: 270 70% 60%;
+    /* Neon Purple */
+    --chart-2: 180 70% 50%;
+    /* Electric Cyan */
+    --chart-3: 140 70% 50%;
+    /* Neon Green */
+    --chart-4: 320 70% 60%;
+    /* Neon Pink */
+    --chart-5: 30 80% 60%;
+    /* Neon Orange */
+
+    --sidebar: 260 20% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 270 70% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 260 20% 20%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 260 20% 20%;
+    --sidebar-ring: 270 70% 60%;
+  }
+
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
 
   body {
@@ -105,10 +108,10 @@
 
     /* Global Mesh Gradient Background - Enhanced */
     background-image:
-      radial-gradient(at 0% 0%, oklch(0.35 0.15 290 / 0.3) 0px, transparent 60%),
-      radial-gradient(at 100% 0%, oklch(0.35 0.15 320 / 0.3) 0px, transparent 60%),
-      radial-gradient(at 100% 100%, oklch(0.35 0.15 180 / 0.3) 0px, transparent 60%),
-      radial-gradient(at 0% 100%, oklch(0.35 0.15 260 / 0.3) 0px, transparent 60%);
+      radial-gradient(at 0% 0%, hsla(290, 70%, 35%, 0.3) 0px, transparent 60%),
+      radial-gradient(at 100% 0%, hsla(320, 70%, 35%, 0.3) 0px, transparent 60%),
+      radial-gradient(at 100% 100%, hsla(180, 70%, 35%, 0.3) 0px, transparent 60%),
+      radial-gradient(at 0% 100%, hsla(260, 70%, 35%, 0.3) 0px, transparent 60%);
     background-attachment: fixed;
   }
 
@@ -130,12 +133,12 @@
 /* Enhanced Glassmorphism Utilities */
 @layer utilities {
   .glass {
-    @apply bg-card backdrop-blur-2xl border border-white/5 shadow-2xl;
+    @apply bg-card/30 backdrop-blur-2xl border border-white/5 shadow-2xl;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   }
 
   .glass-hover {
-    @apply hover:bg-white/5 hover:border-white/10 transition-all duration-300 hover:shadow-[0_0_20px_rgba(var(--primary), 0.3)];
+    @apply hover:bg-white/5 hover:border-white/10 transition-all duration-300 hover:shadow-[0_0_20px_rgba(168, 85, 247, 0.3)];
   }
 
   .text-gradient {
@@ -147,6 +150,6 @@
   }
 
   .neon-border {
-    @apply border border-primary/50 shadow-[0_0_10px_rgba(var(--primary), 0.3)];
+    @apply border border-primary/50 shadow-[0_0_10px_rgba(168, 85, 247, 0.3)];
   }
 }
