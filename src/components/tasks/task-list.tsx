@@ -1,3 +1,5 @@
+'use client';
+
 import { useTasks } from "@/hooks/useTasks"
 import { TaskCard } from "./task-card"
 import { Loader2 } from "lucide-react"
