@@ -270,7 +270,7 @@ export function InvoiceForm({ onSuccess, onCancel }: InvoiceFormProps) {
                                                     }
                                                 }}
                                             >
-                                                <SelectTrigger className="h-9 glass-input">
+                                                <SelectTrigger className="h-9 glass-input w-full">
                                                     <SelectValue placeholder="Select product" />
                                                 </SelectTrigger>
                                                 <SelectContent>
