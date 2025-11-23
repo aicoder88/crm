@@ -15,6 +15,7 @@ export function useCalls(customerId: string) {
         outcome: string;
         notes: string;
         follow_up_date?: string;
+        follow_up_time?: string;
         email?: string;
         owner_manager_name?: string;
     }) {
@@ -67,6 +68,15 @@ export function useCalls(customerId: string) {
 
             // 4. Create a follow-up task if follow_up_date is specified
             if (callData.follow_up_date) {
+                // Combine date and time for reminder_time
+                let reminderTime = null
+                if (callData.follow_up_time) {
+                    const [hours, minutes] = callData.follow_up_time.split(':')
+                    const reminderDate = new Date(callData.follow_up_date)
+                    reminderDate.setHours(parseInt(hours), parseInt(minutes), 0, 0)
+                    reminderTime = reminderDate.toISOString()
+                }
+
                 const { error: taskError } = await supabase
                     .from("tasks")
                     .insert([{
@@ -76,7 +86,8 @@ export function useCalls(customerId: string) {
                         due_date: new Date(callData.follow_up_date).toISOString(),
                         priority: 'medium',
                         status: 'pending',
-                        notes: callData.notes ? `Follow-up from call: ${callData.notes}` : 'Follow-up call scheduled'
+                        notes: callData.notes ? `Follow-up from call: ${callData.notes}` : 'Follow-up call scheduled',
+                        reminder_time: reminderTime
                     }])
 
                 if (taskError) throw taskError

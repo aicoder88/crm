@@ -40,6 +40,7 @@ export function LogCallDialog({ customerId, onCallLogged }: LogCallDialogProps) 
         outcome: "Connected",
         notes: "",
         follow_up_date: "",
+        follow_up_time: "09:00",
         email: "",
         owner_manager_name: "",
         scheduleFollowUp: false
@@ -83,6 +84,7 @@ export function LogCallDialog({ customerId, onCallLogged }: LogCallDialogProps) 
                 outcome: formData.outcome,
                 notes: formData.notes,
                 follow_up_date: formData.scheduleFollowUp && formData.follow_up_date ? new Date(formData.follow_up_date).toISOString() : undefined,
+                follow_up_time: formData.scheduleFollowUp && formData.follow_up_time ? formData.follow_up_time : undefined,
                 email: formData.email,
                 owner_manager_name: formData.owner_manager_name
             })
@@ -93,6 +95,7 @@ export function LogCallDialog({ customerId, onCallLogged }: LogCallDialogProps) 
                 outcome: "Connected",
                 notes: "",
                 follow_up_date: "",
+                follow_up_time: "09:00",
                 email: "",
                 owner_manager_name: "",
                 scheduleFollowUp: false
@@ -200,18 +203,32 @@ export function LogCallDialog({ customerId, onCallLogged }: LogCallDialogProps) 
                             </Label>
                         </div>
                         {formData.scheduleFollowUp && (
-                            <div className="space-y-2 pl-6">
-                                <Label htmlFor="follow_up">Follow-up Date</Label>
-                                <Input
-                                    id="follow_up"
-                                    type="date"
-                                    value={formData.follow_up_date}
-                                    onChange={(e) => setFormData({ ...formData, follow_up_date: e.target.value })}
-                                    min={new Date().toISOString().split('T')[0]}
-                                    required={formData.scheduleFollowUp}
-                                />
+                            <div className="space-y-3 pl-6">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="follow_up">Follow-up Date</Label>
+                                        <Input
+                                            id="follow_up"
+                                            type="date"
+                                            value={formData.follow_up_date}
+                                            onChange={(e) => setFormData({ ...formData, follow_up_date: e.target.value })}
+                                            min={new Date().toISOString().split('T')[0]}
+                                            required={formData.scheduleFollowUp}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="follow_up_time">Reminder Time</Label>
+                                        <Input
+                                            id="follow_up_time"
+                                            type="time"
+                                            value={formData.follow_up_time}
+                                            onChange={(e) => setFormData({ ...formData, follow_up_time: e.target.value })}
+                                            required={formData.scheduleFollowUp}
+                                        />
+                                    </div>
+                                </div>
                                 <p className="text-xs text-muted-foreground">
-                                    A task will be automatically created for this follow-up call
+                                    A task with reminder will be automatically created for this follow-up call
                                 </p>
                             </div>
                         )}
