@@ -18,7 +18,7 @@ export async function middleware(request: NextRequest) {
 
   // if user is not logged in, redirect to /login
   if (!session) {
-    if (pathname.startsWith("/dashboard")) {
+    if (pathname !== "/login" && !pathname.startsWith("/_next") && !pathname.startsWith("/api")) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
   } else {
@@ -32,5 +32,14 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login"],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder files
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 };

@@ -44,9 +44,18 @@ export const columns: ColumnDef<Customer>[] = [
     },
     {
         accessorKey: "status",
-        header: ({ column }) => (
-            <div className="text-muted-foreground">Status</div>
-        ),
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="text-muted-foreground hover:text-white hover:bg-white/5"
+                >
+                    Status
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
         cell: ({ row }) => {
             const status = row.getValue("status") as string
             let className = "border-white/10 bg-white/5 text-muted-foreground"
@@ -72,9 +81,18 @@ export const columns: ColumnDef<Customer>[] = [
     },
     {
         accessorKey: "tags",
-        header: ({ column }) => (
-            <div className="text-muted-foreground">Tags</div>
-        ),
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="text-muted-foreground hover:text-white hover:bg-white/5"
+                >
+                    Tags
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
         cell: ({ row }) => {
             const tags = row.original.tags || []
             return (
@@ -87,22 +105,50 @@ export const columns: ColumnDef<Customer>[] = [
                 </div>
             )
         },
+        sortingFn: (rowA, rowB) => {
+            const tagsA = rowA.original.tags?.length || 0
+            const tagsB = rowB.original.tags?.length || 0
+            return tagsA - tagsB
+        },
     },
     {
         accessorKey: "contacts",
-        header: ({ column }) => (
-            <div className="text-muted-foreground text-center">Contacts</div>
-        ),
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="text-muted-foreground hover:text-white hover:bg-white/5"
+                >
+                    Contacts
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
         cell: ({ row }) => {
             const contacts = row.original.contacts || []
             return <div className="text-center text-muted-foreground">{contacts.length}</div>
-        }
+        },
+        sortingFn: (rowA, rowB) => {
+            const contactsA = rowA.original.contacts?.length || 0
+            const contactsB = rowB.original.contacts?.length || 0
+            return contactsA - contactsB
+        },
     },
     {
         accessorKey: "social_media",
-        header: ({ column }) => (
-            <div className="text-muted-foreground">Social</div>
-        ),
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="text-muted-foreground hover:text-white hover:bg-white/5"
+                >
+                    Social
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
         cell: ({ row }) => {
             const social = row.original.social_media || []
             return (
@@ -114,7 +160,12 @@ export const columns: ColumnDef<Customer>[] = [
                     ))}
                 </div>
             )
-        }
+        },
+        sortingFn: (rowA, rowB) => {
+            const socialA = rowA.original.social_media?.length || 0
+            const socialB = rowB.original.social_media?.length || 0
+            return socialA - socialB
+        },
     },
     {
         accessorKey: "email",

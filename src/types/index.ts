@@ -235,3 +235,32 @@ export interface ShippingRate {
     estimated_days: number;
     currency: string;
 }
+
+export type FilterOperator = 'include' | 'exclude';
+
+export interface CustomerFilters {
+    status?: string[];
+    statusOperator?: FilterOperator;
+    email?: string;
+    tags?: string[];
+    tagsOperator?: FilterOperator;
+    city?: string[];
+    cityOperator?: FilterOperator;
+    province?: string[];
+    provinceOperator?: FilterOperator;
+    phone?: string;
+    contactsMin?: number;
+    contactsMax?: number;
+    socialMedia?: Array<'facebook' | 'instagram' | 'tiktok' | 'youtube' | 'linkedin'>;
+    socialMediaOperator?: FilterOperator;
+}
+
+export interface SavedSearch {
+    id: string;
+    user_id: string;
+    name: string;
+    filters: CustomerFilters;
+    created_at: string;
+    updated_at: string;
+}
+

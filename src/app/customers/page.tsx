@@ -8,6 +8,9 @@ import Link from "next/link"
 export default async function CustomersPage() {
     const supabase = await createClient()
 
+    const { data: { user } } = await supabase.auth.getUser()
+    console.log('Current user:', user?.email || 'Not authenticated')
+
     const { data: customers, error } = await supabase
         .from("customers")
         .select(`
@@ -33,7 +36,7 @@ export default async function CustomersPage() {
 
     if (error) {
         console.error("Error fetching customers:", error)
-        return <div>Error loading customers</div>
+        return <div className="text-red-500">Error loading customers: {error.message}</div>
     }
 
     const transformedCustomers = customers?.map((c: any) => ({
@@ -42,6 +45,10 @@ export default async function CustomersPage() {
         contacts: c.customer_contacts || [],
         social_media: c.customer_social_media || []
     })) || []
+
+    console.log('Customers from DB:', customers?.length)
+    console.log('Transformed customers:', transformedCustomers.length)
+    console.log('Sample customer:', transformedCustomers[0])
 
     return (
         <div className="space-y-6">

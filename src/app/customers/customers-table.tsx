@@ -3,74 +3,126 @@
 import { useState, useMemo } from "react"
 import { DataTable } from "@/components/ui/data-table"
 import { columns } from "./columns"
-import { Customer } from "@/types"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { X } from "lucide-react"
+import { Customer, CustomerFilters } from "@/types"
+import { CustomerFiltersComponent } from "@/components/customers/customer-filters"
+import { SavedSearchManager } from "@/components/customers/saved-search-manager"
 
 interface CustomersTableProps {
     customers: Customer[]
 }
 
 export function CustomersTable({ customers }: CustomersTableProps) {
-    const [statusFilter, setStatusFilter] = useState<string>("all")
+    const [filters, setFilters] = useState<CustomerFilters>({})
 
     const filteredCustomers = useMemo(() => {
+        console.log('CustomersTable received:', customers.length, 'customers')
+        console.log('Active filters:', filters)
         let filtered = customers
 
-        if (statusFilter !== "all") {
-            filtered = filtered.filter(c => c.status === statusFilter)
+        // Status filter
+        if (filters.status && filters.status.length > 0) {
+            const operator = filters.statusOperator || 'include'
+            filtered = filtered.filter(c => {
+                const matches = filters.status!.includes(c.status)
+                return operator === 'include' ? matches : !matches
+            })
         }
 
+        // Email filter
+        if (filters.email) {
+            const emailLower = filters.email.toLowerCase()
+            filtered = filtered.filter(c =>
+                c.email?.toLowerCase().includes(emailLower)
+            )
+        }
+
+        // Tags filter
+        if (filters.tags && filters.tags.length > 0) {
+            const operator = filters.tagsOperator || 'include'
+            filtered = filtered.filter(c => {
+                const customerTagIds = c.tags?.map(t => t.id) || []
+                const hasAnyTag = filters.tags!.some(tagId => customerTagIds.includes(tagId))
+                return operator === 'include' ? hasAnyTag : !hasAnyTag
+            })
+        }
+
+        // City filter
+        if (filters.city && filters.city.length > 0) {
+            const operator = filters.cityOperator || 'include'
+            filtered = filtered.filter(c => {
+                const matches = c.city && filters.city!.includes(c.city)
+                return operator === 'include' ? matches : !matches
+            })
+        }
+
+        // Province filter
+        if (filters.province && filters.province.length > 0) {
+            const operator = filters.provinceOperator || 'include'
+            filtered = filtered.filter(c => {
+                const matches = c.province && filters.province!.includes(c.province)
+                return operator === 'include' ? matches : !matches
+            })
+        }
+
+        // Phone filter
+        if (filters.phone) {
+            const phoneLower = filters.phone.toLowerCase()
+            filtered = filtered.filter(c =>
+                c.phone?.toLowerCase().includes(phoneLower)
+            )
+        }
+
+        // Contacts count filter
+        if (filters.contactsMin !== undefined || filters.contactsMax !== undefined) {
+            filtered = filtered.filter(c => {
+                const count = c.contacts?.length || 0
+                const meetsMin = filters.contactsMin === undefined || count >= filters.contactsMin
+                const meetsMax = filters.contactsMax === undefined || count <= filters.contactsMax
+                return meetsMin && meetsMax
+            })
+        }
+
+        // Social media filter
+        if (filters.socialMedia && filters.socialMedia.length > 0) {
+            const operator = filters.socialMediaOperator || 'include'
+            filtered = filtered.filter(c => {
+                const customerPlatforms = c.social_media?.map(s => s.platform) || []
+                const hasAnyPlatform = filters.socialMedia!.some(platform =>
+                    customerPlatforms.includes(platform)
+                )
+                return operator === 'include' ? hasAnyPlatform : !hasAnyPlatform
+            })
+        }
+
+        console.log('Filtered customers:', filtered.length)
         return filtered
-    }, [customers, statusFilter])
+    }, [customers, filters])
 
-    const hasFilters = statusFilter !== "all"
-
-    const clearFilters = () => {
-        setStatusFilter("all")
+    const handleLoadSearch = (loadedFilters: CustomerFilters) => {
+        setFilters(loadedFilters)
     }
 
-    const filterComponent = (
-        <div className="flex items-center gap-3">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px] bg-white/5 border-white/10 text-white focus:ring-primary/50">
-                    <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent className="glass-card border-white/10 bg-black/90 text-white">
-                    <SelectItem value="all" className="focus:bg-white/10 focus:text-white cursor-pointer">All Statuses</SelectItem>
-                    <SelectItem value="Qualified" className="focus:bg-white/10 focus:text-white cursor-pointer">Qualified</SelectItem>
-                    <SelectItem value="Interested" className="focus:bg-white/10 focus:text-white cursor-pointer">Interested</SelectItem>
-                    <SelectItem value="Not Qualified" className="focus:bg-white/10 focus:text-white cursor-pointer">Not Qualified</SelectItem>
-                    <SelectItem value="Not Interested" className="focus:bg-white/10 focus:text-white cursor-pointer">Not Interested</SelectItem>
-                    <SelectItem value="Dog Store" className="focus:bg-white/10 focus:text-white cursor-pointer">Dog Store</SelectItem>
-                </SelectContent>
-            </Select>
-            {hasFilters && (
-                <Button
-                    variant="ghost"
-                    onClick={clearFilters}
-                    className="h-9 px-3 text-muted-foreground hover:text-white hover:bg-white/10 transition-colors"
-                >
-                    Clear
-                    <X className="ml-2 h-4 w-4" />
-                </Button>
-            )}
-        </div>
-    )
-
     return (
-        <DataTable
-            columns={columns}
-            data={filteredCustomers}
-            searchKey="store_name"
-            filterComponent={filterComponent}
-        />
+        <div className="space-y-4">
+            <div className="flex items-start gap-3 flex-wrap">
+                <div className="flex-1 min-w-[300px]">
+                    <CustomerFiltersComponent
+                        customers={customers}
+                        filters={filters}
+                        onFiltersChange={setFilters}
+                    />
+                </div>
+                <SavedSearchManager
+                    currentFilters={filters}
+                    onLoadSearch={handleLoadSearch}
+                />
+            </div>
+
+            <DataTable
+                columns={columns}
+                data={filteredCustomers}
+                searchKey="store_name"
+            />
+        </div>
     )
 }
