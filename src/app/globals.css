@@ -4,11 +4,11 @@
 
 @layer base {
   :root {
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    /* Lumina Dark Mode Palette */
+    /* Lumina/Linear Dark Mode Palette */
     --background: 240 10% 3.9%;
-    /* #0a0a0a */
+    /* #09090b */
     --foreground: 0 0% 98%;
 
     --card: 240 10% 3.9%;
@@ -39,15 +39,10 @@
 
     /* Charts - Neon & Vibrant */
     --chart-1: 263.4 70% 50.4%;
-    /* Purple */
     --chart-2: 180 100% 50%;
-    /* Cyan */
     --chart-3: 320 100% 60%;
-    /* Pink */
     --chart-4: 45 100% 60%;
-    /* Yellow */
     --chart-5: 10 100% 60%;
-    /* Orange */
 
     --sidebar: 240 10% 3.9%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -59,7 +54,6 @@
     --sidebar-ring: 263.4 70% 50.4%;
   }
 
-  /* Force Dark Mode */
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -80,11 +74,6 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 263.4 70% 50.4%;
-    --chart-1: 263.4 70% 50.4%;
-    --chart-2: 180 100% 50%;
-    --chart-3: 320 100% 60%;
-    --chart-4: 45 100% 60%;
-    --chart-5: 10 100% 60%;
     --sidebar: 240 10% 3.9%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 263.4 70% 50.4%;
@@ -104,9 +93,9 @@
     /* Deep space background with subtle noise */
     background-color: #050505;
     background-image:
-      radial-gradient(circle at 50% 0%, rgba(120, 50, 255, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(50, 200, 255, 0.05) 0%, transparent 40%),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+      radial-gradient(circle at 50% 0%, rgba(120, 50, 255, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(50, 200, 255, 0.03) 0%, transparent 40%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
     background-attachment: fixed;
   }
 }
@@ -115,8 +104,8 @@
 
   /* Lumina Glass Effect */
   .glass {
-    @apply backdrop-blur-xl border border-white/10 shadow-xl;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    @apply backdrop-blur-xl border border-white/5 shadow-xl;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   }
 
@@ -125,9 +114,9 @@
   }
 
   .glass-hover:hover {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 15px rgba(120, 50, 255, 0.3);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 20px rgba(120, 50, 255, 0.15);
   }
 
   .glass-card {
@@ -136,7 +125,7 @@
   }
 
   .text-glow {
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
   }
 
   .text-gradient {
