@@ -60,7 +60,7 @@ export function AppSidebar() {
     const pathname = usePathname()
 
     return (
-        <Sidebar collapsible="icon" className="border-r border-white/5 bg-black/20 backdrop-blur-xl">
+        <Sidebar collapsible="icon" variant="inset" className="border-r border-white/5 bg-black/20 backdrop-blur-xl">
             <SidebarHeader>
                 <div className="flex items-center gap-2 px-2 py-2">
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-purple-600 text-primary-foreground font-bold shadow-[0_0_15px_rgba(168,85,247,0.5)]">
@@ -86,8 +86,8 @@ export function AppSidebar() {
                                             asChild
                                             isActive={isActive}
                                             className={`transition-all duration-200 ${isActive
-                                                    ? "bg-primary/20 text-primary hover:bg-primary/30 hover:text-primary shadow-[0_0_10px_rgba(168,85,247,0.2)] border-l-2 border-primary"
-                                                    : "text-muted-foreground hover:text-white hover:bg-white/5"
+                                                ? "bg-primary/20 text-primary hover:bg-primary/30 hover:text-primary shadow-[0_0_10px_rgba(168,85,247,0.2)] border-l-2 border-primary"
+                                                : "text-muted-foreground hover:text-white hover:bg-white/5"
                                                 }`}
                                         >
                                             <Link href={item.url}>

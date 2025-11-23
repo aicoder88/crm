@@ -58,7 +58,7 @@ export default function DashboardPage() {
                     })) || []}
                     xKey="month"
                     bars={[
-                        { dataKey: 'revenue', fill: 'oklch(0.65 0.22 264)', name: 'Revenue ($)' }, // Primary Purple
+                        { dataKey: 'revenue', fill: 'hsl(270 70% 60%)', name: 'Revenue ($)' }, // Primary Purple
                     ]}
                     height={350}
                     loading={analyticsLoading}
@@ -76,7 +76,7 @@ export default function DashboardPage() {
                     ] : []}
                     xKey="bucket"
                     bars={[
-                        { dataKey: 'amount', fill: 'oklch(0.637 0.237 25.331)', name: 'Amount ($)' }, // Destructive Red
+                        { dataKey: 'amount', fill: 'hsl(180 70% 50%)', name: 'Amount ($)' }, // Electric Cyan
                     ]}
                     height={350}
                     loading={analyticsLoading}
