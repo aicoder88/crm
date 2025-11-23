@@ -97,6 +97,7 @@ export function DealsList({ customerId }: DealsListProps) {
                 deal={selectedDeal}
                 stages={stages}
                 onSave={handleSaveDeal}
+                defaultCustomerId={customerId}
             />
         </div>
     );

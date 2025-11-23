@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
-import { DataTable } from "@/components/ui/data-table"
-import { columns } from "./columns"
+import { CustomersTable } from "./customers-table"
 import { Button } from "@/components/ui/button"
 import { Plus, Upload } from "lucide-react"
 import Link from "next/link"
@@ -28,6 +27,13 @@ export default async function CustomersPage() {
         return <div>Error loading customers</div>
     }
 
+    const transformedCustomers = customers?.map((c: any) => ({
+        ...c,
+        tags: c.customer_tags?.map((ct: any) => ct.tags) || [],
+        contacts: c.customer_contacts || [],
+        social_media: c.customer_social_media || []
+    })) || []
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -51,12 +57,7 @@ export default async function CustomersPage() {
                 </div>
             </div>
 
-            <DataTable columns={columns} data={customers?.map((c: any) => ({
-                ...c,
-                tags: c.customer_tags?.map((ct: any) => ct.tags) || [],
-                contacts: c.customer_contacts || [],
-                social_media: c.customer_social_media || []
-            })) || []} searchKey="store_name" />
+            <CustomersTable customers={transformedCustomers} />
         </div>
     )
 }

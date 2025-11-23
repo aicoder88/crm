@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useTasks } from "@/hooks/useTasks"
+import { useNotifications } from "@/hooks/useNotifications"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -19,7 +20,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Plus } from "lucide-react"
+import { Plus, Bell } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
 
 interface CreateTaskDialogProps {
     customerId: string
@@ -29,33 +31,57 @@ interface CreateTaskDialogProps {
 export function CreateTaskDialog({ customerId, onTaskCreated }: CreateTaskDialogProps) {
     const [open, setOpen] = useState(false)
     const { createTask } = useTasks(customerId)
+    const { requestPermission, permission } = useNotifications()
     const [loading, setLoading] = useState(false)
 
     const [formData, setFormData] = useState({
         title: "",
         type: "other",
         priority: "medium",
-        due_date: new Date().toISOString().split('T')[0]
+        due_date: new Date().toISOString().split('T')[0],
+        enableReminder: false,
+        reminder_date: new Date().toISOString().split('T')[0],
+        reminder_time: "09:00"
     })
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
         try {
+            // Request notification permission if reminder is enabled and not already granted
+            if (formData.enableReminder && permission !== 'granted') {
+                const result = await requestPermission()
+                if (result !== 'granted') {
+                    alert('Notification permission is required for reminders. The task will be created without a reminder.')
+                    setFormData({ ...formData, enableReminder: false })
+                }
+            }
+
+            // Combine date and time for reminder
+            let reminderTime = null
+            if (formData.enableReminder) {
+                reminderTime = new Date(`${formData.reminder_date}T${formData.reminder_time}`).toISOString()
+            }
+
             await createTask({
                 title: formData.title,
                 type: formData.type as any,
                 priority: formData.priority as any,
                 due_date: new Date(formData.due_date).toISOString(),
                 status: 'pending',
-                notes: null
+                notes: null,
+                reminder_time: reminderTime,
+                reminder_sent: false
             })
             setOpen(false)
             setFormData({
                 title: "",
                 type: "other",
                 priority: "medium",
-                due_date: new Date().toISOString().split('T')[0]
+                due_date: new Date().toISOString().split('T')[0],
+                enableReminder: false,
+                reminder_date: new Date().toISOString().split('T')[0],
+                reminder_time: "09:00"
             })
             onTaskCreated?.()
         } catch (error) {
@@ -130,6 +156,46 @@ export function CreateTaskDialog({ customerId, onTaskCreated }: CreateTaskDialog
                             onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
                             required
                         />
+                    </div>
+                    <div className="space-y-3 p-4 rounded-lg border border-border/50 bg-card/30">
+                        <div className="flex items-center space-x-2">
+                            <Checkbox
+                                id="enableReminder"
+                                checked={formData.enableReminder}
+                                onCheckedChange={(checked) =>
+                                    setFormData({ ...formData, enableReminder: checked as boolean })
+                                }
+                            />
+                            <Label
+                                htmlFor="enableReminder"
+                                className="flex items-center gap-2 cursor-pointer font-medium"
+                            >
+                                <Bell className="h-4 w-4" />
+                                Set Reminder
+                            </Label>
+                        </div>
+                        {formData.enableReminder && (
+                            <div className="grid grid-cols-2 gap-3 pl-6">
+                                <div className="space-y-2">
+                                    <Label htmlFor="reminder_date" className="text-sm">Date</Label>
+                                    <Input
+                                        id="reminder_date"
+                                        type="date"
+                                        value={formData.reminder_date}
+                                        onChange={(e) => setFormData({ ...formData, reminder_date: e.target.value })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="reminder_time" className="text-sm">Time</Label>
+                                    <Input
+                                        id="reminder_time"
+                                        type="time"
+                                        value={formData.reminder_time}
+                                        onChange={(e) => setFormData({ ...formData, reminder_time: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
                     <div className="flex justify-end">
                         <Button type="submit" disabled={loading}>

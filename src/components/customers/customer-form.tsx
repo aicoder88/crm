@@ -24,9 +24,10 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Loader2 } from "lucide-react"
-import { toast } from "sonner" // Assuming sonner is installed or use a simple alert for now if not
+import { toast } from "sonner"
+import { Customer } from "@/types"
 
 const formSchema = z.object({
     store_name: z.string().min(2, {
@@ -43,10 +44,16 @@ const formSchema = z.object({
     notes: z.string().optional(),
 })
 
-export function CustomerForm() {
+interface CustomerFormProps {
+    customerId?: string
+    initialData?: Customer
+}
+
+export function CustomerForm({ customerId, initialData }: CustomerFormProps) {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
     const supabase = createClient()
+    const isEditMode = !!customerId
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -64,33 +71,67 @@ export function CustomerForm() {
         },
     })
 
+    // Load customer data when in edit mode
+    useEffect(() => {
+        if (initialData) {
+            form.reset({
+                store_name: initialData.store_name || "",
+                status: initialData.status as any,
+                email: initialData.email || "",
+                phone: initialData.phone || "",
+                website: initialData.website || "",
+                street: initialData.street || "",
+                city: initialData.city || "",
+                province: initialData.province || "",
+                postal_code: initialData.postal_code || "",
+                notes: initialData.notes || "",
+            })
+        }
+    }, [initialData, form])
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true)
         try {
-            const { error } = await supabase.from("customers").insert([
-                {
-                    store_name: values.store_name,
-                    status: values.status,
-                    email: values.email || null,
-                    phone: values.phone || null,
-                    website: values.website || null,
-                    street: values.street || null,
-                    city: values.city || null,
-                    province: values.province || null,
-                    postal_code: values.postal_code || null,
-                    notes: values.notes || null,
-                },
-            ])
-
-            if (error) {
-                throw error
+            const customerData = {
+                store_name: values.store_name,
+                status: values.status,
+                email: values.email || null,
+                phone: values.phone || null,
+                website: values.website || null,
+                street: values.street || null,
+                city: values.city || null,
+                province: values.province || null,
+                postal_code: values.postal_code || null,
+                notes: values.notes || null,
             }
 
-            router.push("/customers")
+            if (isEditMode) {
+                // Update existing customer
+                const { error } = await supabase
+                    .from("customers")
+                    .update(customerData)
+                    .eq("id", customerId)
+
+                if (error) throw error
+
+                toast.success("Customer updated successfully")
+                router.push(`/customers/${customerId}`)
+            } else {
+                // Create new customer
+                const { error } = await supabase
+                    .from("customers")
+                    .insert([customerData])
+
+                if (error) throw error
+
+                toast.success("Customer created successfully")
+                router.push("/customers")
+            }
+
             router.refresh()
         } catch (error) {
-            console.error("Error creating customer:", error)
-            alert("Failed to create customer. Please try again.")
+            console.error("Error saving customer:", error)
+            toast.error(`Failed to ${isEditMode ? 'update' : 'create'} customer. Please try again.`)
         } finally {
             setIsLoading(false)
         }
@@ -262,7 +303,7 @@ export function CustomerForm() {
                     </Button>
                     <Button type="submit" disabled={isLoading}>
                         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Create Customer
+                        {isEditMode ? 'Update Customer' : 'Create Customer'}
                     </Button>
                 </div>
             </form>

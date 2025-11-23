@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
+import { Bell, BellOff } from "lucide-react"
 
 interface TaskCardProps {
     task: Task
@@ -38,6 +39,19 @@ export function TaskCard({ task, onToggle }: TaskCardProps) {
                         <span>{format(new Date(task.due_date), "MMM d, yyyy")}</span>
                         <span>•</span>
                         <span className="capitalize">{task.type}</span>
+                        {task.reminder_time && (
+                            <>
+                                <span>•</span>
+                                <span className="flex items-center gap-1">
+                                    {task.reminder_sent ? (
+                                        <BellOff className="h-3 w-3 text-muted-foreground/50" />
+                                    ) : (
+                                        <Bell className="h-3 w-3 text-primary" />
+                                    )}
+                                    {format(new Date(task.reminder_time), "MMM d, h:mm a")}
+                                </span>
+                            </>
+                        )}
                     </div>
                 </div>
             </CardContent>

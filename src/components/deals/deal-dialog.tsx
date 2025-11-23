@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Deal, DealStage } from '@/types';
 import { useCustomers } from '@/hooks/use-customers';
+import { CustomerCombobox } from '@/components/ui/customer-combobox';
 
 interface DealDialogProps {
     open: boolean;
@@ -14,16 +15,17 @@ interface DealDialogProps {
     deal?: Deal;
     stages: DealStage[];
     onSave: (deal: Partial<Deal>) => Promise<void>;
+    defaultCustomerId?: string;
 }
 
-export function DealDialog({ open, onOpenChange, deal, stages, onSave }: DealDialogProps) {
+export function DealDialog({ open, onOpenChange, deal, stages, onSave, defaultCustomerId }: DealDialogProps) {
     const { customers } = useCustomers();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<Partial<Deal>>({
         title: '',
         value: 0,
         stage: stages[0]?.name || '',
-        customer_id: '',
+        customer_id: defaultCustomerId || '',
         expected_close_date: '',
         notes: '',
     });
@@ -43,12 +45,12 @@ export function DealDialog({ open, onOpenChange, deal, stages, onSave }: DealDia
                 title: '',
                 value: 0,
                 stage: stages[0]?.name || '',
-                customer_id: '',
+                customer_id: defaultCustomerId || '',
                 expected_close_date: '',
                 notes: '',
             });
         }
-    }, [deal, stages, open]);
+    }, [deal, stages, open, defaultCustomerId]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -82,22 +84,13 @@ export function DealDialog({ open, onOpenChange, deal, stages, onSave }: DealDia
 
                     <div className="space-y-2">
                         <Label htmlFor="customer">Customer</Label>
-                        <Select
+                        <CustomerCombobox
+                            customers={customers}
                             value={formData.customer_id}
                             onValueChange={(value) => setFormData({ ...formData, customer_id: value })}
-                            required
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select customer" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {customers.map((customer) => (
-                                    <SelectItem key={customer.id} value={customer.id}>
-                                        {customer.store_name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            placeholder="Select customer"
+                            disabled={!!deal}
+                        />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">

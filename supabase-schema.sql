@@ -144,6 +144,8 @@ CREATE TABLE tasks (
   priority TEXT CHECK (priority IN ('low', 'medium', 'high')) DEFAULT 'medium',
   status TEXT CHECK (status IN ('pending', 'completed', 'cancelled')) DEFAULT 'pending',
   notes TEXT,
+  reminder_time TIMESTAMPTZ,
+  reminder_sent BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   completed_at TIMESTAMPTZ
 );
@@ -273,6 +275,7 @@ CREATE INDEX idx_timeline_follow_up ON customer_timeline(call_follow_up_date) WH
 CREATE INDEX idx_tasks_due_date ON tasks(due_date) WHERE status = 'pending';
 CREATE INDEX idx_tasks_customer ON tasks(customer_id);
 CREATE INDEX idx_tasks_status ON tasks(status);
+CREATE INDEX idx_tasks_reminder ON tasks(reminder_time) WHERE status = 'pending' AND reminder_sent = false;
 
 -- Deals
 CREATE INDEX idx_deals_customer ON deals(customer_id);

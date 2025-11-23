@@ -57,7 +57,9 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
                     </div>
                     <div className="flex gap-2">
                         <LogCallDialog customerId={customer.id} />
-                        <Button variant="outline">Edit Customer</Button>
+                        <Button variant="outline" asChild>
+                            <Link href={`/customers/${customer.id}/edit`}>Edit Customer</Link>
+                        </Button>
                     </div>
                 </div>
 

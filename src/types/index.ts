@@ -102,6 +102,8 @@ export interface Task {
     priority: 'low' | 'medium' | 'high';
     status: 'pending' | 'completed' | 'cancelled';
     notes: string | null;
+    reminder_time: string | null;
+    reminder_sent: boolean;
     created_at: string;
     completed_at: string | null;
 }
