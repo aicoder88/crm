@@ -16,12 +16,11 @@ const data = [
 
 export function DashboardCharts() {
     return (
-        <Card className="col-span-4 glass border-none overflow-hidden relative group">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <Card className="col-span-4 glass border-none overflow-hidden relative group shadow-sm hover:shadow-md transition-all duration-300">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
+                <CardTitle className="flex items-center gap-2 text-lg font-medium">
                     <Activity className="h-5 w-5 text-primary" />
-                    <span className="text-gradient-primary font-bold">Revenue Growth</span>
+                    <span className="text-foreground">Revenue Growth</span>
                 </CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
@@ -30,20 +29,20 @@ export function DashboardCharts() {
                         <AreaChart data={data}>
                             <defs>
                                 <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
+                                    <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.2} />
                                     <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                             <XAxis
                                 dataKey="name"
-                                stroke="#888888"
+                                stroke="var(--muted-foreground)"
                                 fontSize={12}
                                 tickLine={false}
                                 axisLine={false}
                             />
                             <YAxis
-                                stroke="#888888"
+                                stroke="var(--muted-foreground)"
                                 fontSize={12}
                                 tickLine={false}
                                 axisLine={false}
@@ -51,12 +50,13 @@ export function DashboardCharts() {
                             />
                             <Tooltip
                                 contentStyle={{
-                                    backgroundColor: 'rgba(20, 20, 30, 0.9)',
-                                    border: '1px solid rgba(255,255,255,0.1)',
-                                    borderRadius: '8px',
-                                    boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
+                                    backgroundColor: 'var(--popover)',
+                                    border: '1px solid var(--border)',
+                                    borderRadius: '12px',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                    color: 'var(--popover-foreground)'
                                 }}
-                                itemStyle={{ color: '#fff' }}
+                                itemStyle={{ color: 'var(--primary)' }}
                             />
                             <Area
                                 type="monotone"
