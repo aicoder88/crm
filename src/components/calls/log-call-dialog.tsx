@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useCalls } from "@/hooks/useCalls"
+import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -21,6 +22,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Phone } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
 
 interface LogCallDialogProps {
     customerId: string
@@ -30,14 +32,47 @@ interface LogCallDialogProps {
 export function LogCallDialog({ customerId, onCallLogged }: LogCallDialogProps) {
     const [open, setOpen] = useState(false)
     const { logCall, loading } = useCalls(customerId)
+    const supabase = createClient()
 
     const [formData, setFormData] = useState({
         date: new Date().toISOString().split('T')[0],
         duration_minutes: 5,
         outcome: "Connected",
         notes: "",
-        follow_up_date: ""
+        follow_up_date: "",
+        email: "",
+        owner_manager_name: "",
+        scheduleFollowUp: false
     })
+
+    // Fetch customer data when dialog opens
+    useEffect(() => {
+        if (open) {
+            fetchCustomerData()
+        }
+    }, [open])
+
+    async function fetchCustomerData() {
+        try {
+            const { data, error } = await supabase
+                .from("customers")
+                .select("email, owner_manager_name")
+                .eq("id", customerId)
+                .single()
+
+            if (error) throw error
+
+            if (data) {
+                setFormData(prev => ({
+                    ...prev,
+                    email: data.email || "",
+                    owner_manager_name: data.owner_manager_name || ""
+                }))
+            }
+        } catch (error) {
+            console.error("Error fetching customer data:", error)
+        }
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -47,7 +82,9 @@ export function LogCallDialog({ customerId, onCallLogged }: LogCallDialogProps) 
                 duration_minutes: Number(formData.duration_minutes),
                 outcome: formData.outcome,
                 notes: formData.notes,
-                follow_up_date: formData.follow_up_date ? new Date(formData.follow_up_date).toISOString() : undefined
+                follow_up_date: formData.scheduleFollowUp && formData.follow_up_date ? new Date(formData.follow_up_date).toISOString() : undefined,
+                email: formData.email,
+                owner_manager_name: formData.owner_manager_name
             })
             setOpen(false)
             setFormData({
@@ -55,7 +92,10 @@ export function LogCallDialog({ customerId, onCallLogged }: LogCallDialogProps) 
                 duration_minutes: 5,
                 outcome: "Connected",
                 notes: "",
-                follow_up_date: ""
+                follow_up_date: "",
+                email: "",
+                owner_manager_name: "",
+                scheduleFollowUp: false
             })
             onCallLogged?.()
         } catch (error) {
@@ -116,6 +156,28 @@ export function LogCallDialog({ customerId, onCallLogged }: LogCallDialogProps) 
                             </SelectContent>
                         </Select>
                     </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="email">Email</Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                placeholder="customer@example.com"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="owner_name">Owner/Manager Name</Label>
+                            <Input
+                                id="owner_name"
+                                type="text"
+                                value={formData.owner_manager_name}
+                                onChange={(e) => setFormData({ ...formData, owner_manager_name: e.target.value })}
+                                placeholder="John Doe"
+                            />
+                        </div>
+                    </div>
                     <div className="space-y-2">
                         <Label htmlFor="notes">Notes</Label>
                         <Textarea
@@ -123,16 +185,36 @@ export function LogCallDialog({ customerId, onCallLogged }: LogCallDialogProps) 
                             value={formData.notes}
                             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                             placeholder="Call summary..."
+                            rows={3}
                         />
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="follow_up">Follow-up Date (Optional)</Label>
-                        <Input
-                            id="follow_up"
-                            type="date"
-                            value={formData.follow_up_date}
-                            onChange={(e) => setFormData({ ...formData, follow_up_date: e.target.value })}
-                        />
+                    <div className="space-y-3 pt-2 border-t">
+                        <div className="flex items-center space-x-2">
+                            <Checkbox
+                                id="schedule_follow_up"
+                                checked={formData.scheduleFollowUp}
+                                onCheckedChange={(checked) => setFormData({ ...formData, scheduleFollowUp: checked as boolean })}
+                            />
+                            <Label htmlFor="schedule_follow_up" className="text-sm font-medium cursor-pointer">
+                                Schedule a follow-up call
+                            </Label>
+                        </div>
+                        {formData.scheduleFollowUp && (
+                            <div className="space-y-2 pl-6">
+                                <Label htmlFor="follow_up">Follow-up Date</Label>
+                                <Input
+                                    id="follow_up"
+                                    type="date"
+                                    value={formData.follow_up_date}
+                                    onChange={(e) => setFormData({ ...formData, follow_up_date: e.target.value })}
+                                    min={new Date().toISOString().split('T')[0]}
+                                    required={formData.scheduleFollowUp}
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                    A task will be automatically created for this follow-up call
+                                </p>
+                            </div>
+                        )}
                     </div>
                     <div className="flex justify-end">
                         <Button type="submit" disabled={loading}>

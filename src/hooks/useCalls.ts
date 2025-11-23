@@ -15,11 +15,27 @@ export function useCalls(customerId: string) {
         outcome: string;
         notes: string;
         follow_up_date?: string;
+        email?: string;
+        owner_manager_name?: string;
     }) {
         setLoading(true)
         setError(null)
         try {
-            // 1. Insert into calls table
+            // 1. Update customer email and owner name if provided
+            if (callData.email !== undefined || callData.owner_manager_name !== undefined) {
+                const updates: any = {}
+                if (callData.email !== undefined) updates.email = callData.email
+                if (callData.owner_manager_name !== undefined) updates.owner_manager_name = callData.owner_manager_name
+
+                const { error: customerError } = await supabase
+                    .from("customers")
+                    .update(updates)
+                    .eq("id", customerId)
+
+                if (customerError) throw customerError
+            }
+
+            // 2. Insert into calls table
             const { data: call, error: callError } = await supabase
                 .from("calls")
                 .insert([{
@@ -35,7 +51,7 @@ export function useCalls(customerId: string) {
 
             if (callError) throw callError
 
-            // 2. Insert into customer_timeline
+            // 3. Insert into customer_timeline
             const { error: timelineError } = await supabase
                 .from("customer_timeline")
                 .insert([{
@@ -44,17 +60,27 @@ export function useCalls(customerId: string) {
                     call_duration_minutes: callData.duration_minutes,
                     call_outcome: callData.outcome,
                     call_follow_up_date: callData.follow_up_date,
-                    // We store the full note in the timeline data or maybe just use the note_category if applicable
-                    // But timeline has 'data' JSONB field, we can put notes there if needed, 
-                    // or if there was a 'notes' column in timeline (there isn't, only note_category).
-                    // Wait, the schema has `note_category` but no generic `notes` text column for timeline?
-                    // Ah, `customer_timeline` has `data` JSONB.
-                    // But `calls` has `notes`.
-                    // Let's put the notes in `data` for the timeline event so it can be displayed.
                     data: { notes: callData.notes }
                 }])
 
             if (timelineError) throw timelineError
+
+            // 4. Create a follow-up task if follow_up_date is specified
+            if (callData.follow_up_date) {
+                const { error: taskError } = await supabase
+                    .from("tasks")
+                    .insert([{
+                        customer_id: customerId,
+                        type: 'call',
+                        title: 'Follow-up call',
+                        due_date: new Date(callData.follow_up_date).toISOString(),
+                        priority: 'medium',
+                        status: 'pending',
+                        notes: callData.notes ? `Follow-up from call: ${callData.notes}` : 'Follow-up call scheduled'
+                    }])
+
+                if (taskError) throw taskError
+            }
 
             return call
         } catch (err: any) {
