@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Purrify CRM",
-  description: "Customer relationship management for Purrify - Managing B2B pet store relationships across Canada",
+  title: "Purrify CRM - Award-Winning Customer Management",
+  description: "Next-generation CRM for Purrify - Managing B2B pet store relationships across Canada with unmatched speed, beauty, and efficiency",
 };
 
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -22,6 +22,8 @@ import { AppSidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { TaskReminderMonitor } from "@/components/tasks/TaskReminderMonitor";
+import { KeyboardShortcutsDialog } from "@/components/keyboard-shortcuts-dialog";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
   children,
@@ -38,12 +40,14 @@ export default function RootLayout({
           <AppSidebar />
           <SidebarInset>
             <Header />
-            <main className="flex-1 p-6 overflow-hidden">
+            <main className="flex-1 p-6 overflow-auto">
               <PageTransition>
                 {children}
               </PageTransition>
             </main>
           </SidebarInset>
+          <KeyboardShortcutsDialog />
+          <Toaster richColors position="top-right" />
         </SidebarProvider>
       </body>
     </html>
