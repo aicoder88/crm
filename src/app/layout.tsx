@@ -38,9 +38,9 @@ export default function RootLayout({
         <SidebarProvider>
           <TaskReminderMonitor />
           <AppSidebar />
-          <SidebarInset>
+          <SidebarInset className="bg-transparent">
             <Header />
-            <main className="flex-1 p-6 overflow-auto">
+            <main className="flex-1 p-6 overflow-auto bg-transparent">
               <PageTransition>
                 {children}
               </PageTransition>

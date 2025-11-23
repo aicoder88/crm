@@ -51,7 +51,7 @@ export function DealCard({ deal, onClick }: DealCardProps) {
             onClick={() => onClick(deal)}
             className="cursor-grab active:cursor-grabbing group perspective-1000"
         >
-            <Card className="glass-card border-none shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white/10 to-white/5 hover:from-white/15 hover:to-white/10">
+            <Card className="glass border-white/5 shadow-sm hover:shadow-[0_0_20px_rgba(120,50,255,0.2)] transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white/10 to-white/5 hover:from-white/15 hover:to-white/10">
                 <CardHeader className="p-4 pb-2 space-y-1">
                     <CardTitle className="text-sm font-medium leading-none text-foreground/90 group-hover:text-primary transition-colors">
                         {deal.title}

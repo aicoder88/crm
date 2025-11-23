@@ -8,11 +8,11 @@ export default function InvoicesPage() {
     const [refreshKey, setRefreshKey] = useState(0);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 animate-fade-in-down">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Invoices</h1>
-                    <p className="text-muted-foreground">Manage customer invoices and payments</p>
+                    <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">Invoices</h1>
+                    <p className="text-muted-foreground mt-1">Manage customer invoices and payments</p>
                 </div>
                 <InvoiceDialog onSuccess={() => setRefreshKey(prev => prev + 1)} />
             </div>

@@ -64,22 +64,22 @@ export function TimelineItem({ event }: TimelineItemProps) {
     }
 
     return (
-        <div className="flex gap-4 pb-8 relative last:pb-0">
+        <div className="flex gap-4 pb-8 relative last:pb-0 group">
             {/* Line connecting items */}
-            <div className="absolute left-[19px] top-8 bottom-0 w-px bg-border last:hidden" />
+            <div className="absolute left-[19px] top-8 bottom-0 w-px bg-white/10 last:hidden" />
 
-            <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border bg-background shadow-sm">
+            <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-black/50 shadow-[0_0_10px_rgba(0,0,0,0.5)] group-hover:border-white/20 transition-colors">
                 {getIcon()}
             </div>
 
             <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-semibold">{getTitle()}</h4>
+                    <h4 className="text-sm font-semibold text-white group-hover:text-primary transition-colors">{getTitle()}</h4>
                     <span className="text-xs text-muted-foreground">
                         {formatDistanceToNow(new Date(event.created_at), { addSuffix: true })}
                     </span>
                 </div>
-                <div className="text-muted-foreground">
+                <div className="text-muted-foreground group-hover:text-white/80 transition-colors">
                     {renderContent()}
                 </div>
             </div>

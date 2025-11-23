@@ -59,6 +59,13 @@ module.exports = {
                     border: "hsl(var(--sidebar-border))",
                     ring: "hsl(var(--sidebar-ring))",
                 },
+                // Lumina Custom Colors
+                lumina: {
+                    purple: "#7832FF",
+                    cyan: "#32C8FF",
+                    pink: "#FF3296",
+                    dark: "#0A0A0C",
+                }
             },
             borderRadius: {
                 lg: "var(--radius)",
@@ -74,10 +81,15 @@ module.exports = {
                     "0%": { opacity: "0", transform: "translateY(20px)" },
                     "100%": { opacity: "1", transform: "translateY(0)" },
                 },
+                "glow-pulse": {
+                    "0%, 100%": { boxShadow: "0 0 5px rgba(120, 50, 255, 0.2)" },
+                    "50%": { boxShadow: "0 0 20px rgba(120, 50, 255, 0.6)" },
+                }
             },
             animation: {
                 "fade-in-down": "fade-in-down 0.5s ease-out",
                 "fade-in-up": "fade-in-up 0.5s ease-out",
+                "glow": "glow-pulse 3s infinite",
             },
         },
     },

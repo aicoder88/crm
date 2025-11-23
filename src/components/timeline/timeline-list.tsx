@@ -40,7 +40,7 @@ export function TimelineList({ customerId }: TimelineListProps) {
 
     if (events.length === 0) {
         return (
-            <div className="text-center p-8 text-muted-foreground border rounded-lg border-dashed">
+            <div className="text-center p-8 text-muted-foreground border border-dashed border-white/10 rounded-lg bg-white/5">
                 <p className="text-sm">No activity yet.</p>
                 <p className="text-xs mt-1">Activity will appear here as you interact with this customer.</p>
             </div>

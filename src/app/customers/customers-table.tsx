@@ -38,25 +38,25 @@ export function CustomersTable({ customers }: CustomersTableProps) {
     }
 
     const filterComponent = (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[180px] bg-white/5 border-white/10 text-white focus:ring-primary/50">
                     <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">All Statuses</SelectItem>
-                    <SelectItem value="Qualified">Qualified</SelectItem>
-                    <SelectItem value="Interested">Interested</SelectItem>
-                    <SelectItem value="Not Qualified">Not Qualified</SelectItem>
-                    <SelectItem value="Not Interested">Not Interested</SelectItem>
-                    <SelectItem value="Dog Store">Dog Store</SelectItem>
+                <SelectContent className="glass-card border-white/10 bg-black/90 text-white">
+                    <SelectItem value="all" className="focus:bg-white/10 focus:text-white cursor-pointer">All Statuses</SelectItem>
+                    <SelectItem value="Qualified" className="focus:bg-white/10 focus:text-white cursor-pointer">Qualified</SelectItem>
+                    <SelectItem value="Interested" className="focus:bg-white/10 focus:text-white cursor-pointer">Interested</SelectItem>
+                    <SelectItem value="Not Qualified" className="focus:bg-white/10 focus:text-white cursor-pointer">Not Qualified</SelectItem>
+                    <SelectItem value="Not Interested" className="focus:bg-white/10 focus:text-white cursor-pointer">Not Interested</SelectItem>
+                    <SelectItem value="Dog Store" className="focus:bg-white/10 focus:text-white cursor-pointer">Dog Store</SelectItem>
                 </SelectContent>
             </Select>
             {hasFilters && (
                 <Button
                     variant="ghost"
                     onClick={clearFilters}
-                    className="h-8 px-2 lg:px-3"
+                    className="h-9 px-3 text-muted-foreground hover:text-white hover:bg-white/10 transition-colors"
                 >
                     Clear
                     <X className="ml-2 h-4 w-4" />

@@ -40,26 +40,26 @@ export function ProductList() {
     }
 
     return (
-        <div className="rounded-md border">
+        <div className="rounded-xl border border-white/5 glass overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
             <Table>
                 <TableHeader>
-                    <TableRow>
-                        <TableHead>SKU</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead className="text-right">Price</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                    <TableRow className="hover:bg-transparent border-white/5">
+                        <TableHead className="text-muted-foreground">SKU</TableHead>
+                        <TableHead className="text-muted-foreground">Name</TableHead>
+                        <TableHead className="text-muted-foreground">Description</TableHead>
+                        <TableHead className="text-right text-muted-foreground">Price</TableHead>
+                        <TableHead className="text-right text-muted-foreground">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {products.map((product) => (
-                        <TableRow key={product.id}>
-                            <TableCell className="font-mono text-sm">{product.sku}</TableCell>
-                            <TableCell className="font-medium">{product.name}</TableCell>
+                        <TableRow key={product.id} className="hover:bg-white/5 border-white/5 transition-colors">
+                            <TableCell className="font-mono text-sm text-white">{product.sku}</TableCell>
+                            <TableCell className="font-medium text-white">{product.name}</TableCell>
                             <TableCell className="text-muted-foreground max-w-xs truncate">
                                 {product.description || '-'}
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-right text-white">
                                 {formatCurrency(product.unit_price, product.currency)}
                             </TableCell>
                             <TableCell className="text-right">
@@ -67,7 +67,7 @@ export function ProductList() {
                                     <ProductDialog
                                         product={product}
                                         trigger={
-                                            <Button variant="ghost" size="icon">
+                                            <Button variant="ghost" size="icon" className="hover:bg-white/10 hover:text-white text-muted-foreground transition-colors">
                                                 <Pencil className="h-4 w-4" />
                                             </Button>
                                         }
@@ -77,8 +77,9 @@ export function ProductList() {
                                         variant="ghost"
                                         size="icon"
                                         onClick={() => handleDelete(product.id)}
+                                        className="hover:bg-red-500/10 hover:text-red-400 text-muted-foreground transition-colors"
                                     >
-                                        <Trash2 className="h-4 w-4 text-destructive" />
+                                        <Trash2 className="h-4 w-4" />
                                     </Button>
                                 </div>
                             </TableCell>

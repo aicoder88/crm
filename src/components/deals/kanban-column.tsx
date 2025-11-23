@@ -22,7 +22,7 @@ export function KanbanColumn({ stage, deals, onDealClick }: KanbanColumnProps) {
     const totalValue = deals.reduce((sum, deal) => sum + (deal.value || 0), 0);
 
     return (
-        <div className="flex flex-col h-full min-w-[300px] w-[300px] glass-card border-none rounded-xl p-2 bg-white/5 backdrop-blur-sm">
+        <div className="flex flex-col h-full min-w-[300px] w-[300px] glass border-white/5 rounded-xl p-2 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
             <div className="flex items-center justify-between p-3 mb-2 bg-white/5 rounded-lg border border-white/5">
                 <div className="flex items-center gap-2">
                     <h3 className="font-bold text-sm tracking-tight">{stage.name}</h3>

@@ -26,10 +26,10 @@ export default async function DashboardPage() {
       {/* Hero Section */}
       <div className="flex flex-col gap-2 animate-fade-in-down">
         <h1 className="text-4xl font-bold tracking-tight">
-          <span className="text-gradient">
+          <span className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
             Good evening,
           </span>{" "}
-          <span className="text-gradient-primary">
+          <span className="text-gradient font-extrabold drop-shadow-[0_0_15px_rgba(120,50,255,0.5)]">
             Team
           </span>
         </h1>
@@ -48,18 +48,18 @@ export default async function DashboardPage() {
         <DashboardCharts />
 
         {/* Recent Customers */}
-        <Card className="col-span-4 lg:col-span-4 glass border-none">
+        <Card className="col-span-4 lg:col-span-4 glass border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-purple-400" />
+              <Users className="h-5 w-5 text-purple-400 drop-shadow-[0_0_5px_rgba(168,85,247,0.5)]" />
               <span className="text-white">Recent Customers</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {recentCustomers?.map((customer) => (
-                <div key={customer.id} className="flex items-center group p-3 rounded-xl glass-hover cursor-pointer">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-white/10 shadow-inner">
+                <div key={customer.id} className="flex items-center group p-3 rounded-xl hover:bg-white/5 transition-all duration-300 cursor-pointer border border-transparent hover:border-white/5">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-white/10 shadow-inner group-hover:shadow-[0_0_10px_rgba(168,85,247,0.3)] transition-all">
                     <span className="font-bold text-purple-300">{customer.store_name.substring(0, 2).toUpperCase()}</span>
                   </div>
                   <div className="ml-4 space-y-1 flex-1">
@@ -91,13 +91,13 @@ export default async function DashboardPage() {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="col-span-3 glass border-none relative overflow-hidden">
+        <Card className="col-span-3 glass border-white/5 relative overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
           <div className="absolute top-0 right-0 p-4 opacity-5">
             <Activity className="h-48 w-48 text-teal-500" />
           </div>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Activity className="h-5 w-5 text-teal-400" />
+              <Activity className="h-5 w-5 text-teal-400 drop-shadow-[0_0_5px_rgba(20,184,166,0.5)]" />
               <span className="text-white">Quick Actions</span>
             </CardTitle>
           </CardHeader>
@@ -133,7 +133,7 @@ export default async function DashboardPage() {
                 <span className="w-full border-t border-white/10" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-black/20 backdrop-blur-md px-2 text-muted-foreground rounded-full">Coming Soon</span>
+                <span className="bg-black/20 backdrop-blur-md px-2 text-muted-foreground rounded-full border border-white/5">Coming Soon</span>
               </div>
             </div>
 

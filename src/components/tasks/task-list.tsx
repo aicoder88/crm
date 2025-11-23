@@ -34,8 +34,7 @@ export function TaskList({ customerId }: TaskListProps) {
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <h3 className="font-semibold">Tasks</h3>
+            <div className="flex items-center justify-end">
                 <CreateTaskDialog customerId={customerId} onTaskCreated={fetchTasks} />
             </div>
 
