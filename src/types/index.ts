@@ -43,7 +43,7 @@ export interface Tag {
 export interface CustomerSocialMedia {
     id: string;
     customer_id: string;
-    platform: 'facebook' | 'instagram' | 'tiktok' | 'youtube';
+    platform: 'facebook' | 'instagram' | 'tiktok' | 'youtube' | 'linkedin';
     url: string;
     created_at: string;
 }

@@ -11,16 +11,25 @@ export default async function CustomersPage() {
     const { data: customers, error } = await supabase
         .from("customers")
         .select(`
-            *,
+            id,
+            store_name,
+            email,
+            phone,
+            city,
+            province,
+            status,
             customer_tags (
                 tags (
-                    *
+                    id,
+                    name,
+                    color
                 )
             ),
-            customer_contacts (*),
-            customer_social_media (*)
+            customer_contacts (id),
+            customer_social_media (id, platform)
         `)
         .order("created_at", { ascending: false })
+        .limit(1000)
 
     if (error) {
         console.error("Error fetching customers:", error)

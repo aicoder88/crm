@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Mail, MapPin, Phone, Globe } from "lucide-react"
+import { ArrowLeft, Mail, MapPin, Phone, Globe, Facebook, Instagram, Linkedin, Youtube } from "lucide-react"
 import Link from "next/link"
 import { TimelineList } from "@/components/timeline/timeline-list"
 import { TaskList } from "@/components/tasks/task-list"
@@ -18,7 +18,10 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
     try {
         const { data: customer, error } = await supabase
             .from("customers")
-            .select("*")
+            .select(`
+                *,
+                customer_social_media (*)
+            `)
             .eq("id", id)
             .single()
 
@@ -86,6 +89,53 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
                                 </div>
                             </CardContent>
                         </Card>
+
+                        {/* Social Media */}
+                        {customer.customer_social_media && customer.customer_social_media.length > 0 && (
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Social Media</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-3">
+                                    {customer.customer_social_media.map((social: any) => {
+                                        let Icon = Globe
+                                        let platformName = social.platform.charAt(0).toUpperCase() + social.platform.slice(1)
+
+                                        switch(social.platform) {
+                                            case 'facebook':
+                                                Icon = Facebook
+                                                break
+                                            case 'instagram':
+                                                Icon = Instagram
+                                                break
+                                            case 'linkedin':
+                                                Icon = Linkedin
+                                                break
+                                            case 'youtube':
+                                                Icon = Youtube
+                                                break
+                                            case 'tiktok':
+                                                platformName = 'TikTok'
+                                                break
+                                        }
+
+                                        return (
+                                            <div key={social.id} className="flex items-center gap-3">
+                                                <Icon className="h-4 w-4 text-muted-foreground" />
+                                                <a
+                                                    href={social.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-sm hover:underline text-primary"
+                                                >
+                                                    {platformName}
+                                                </a>
+                                            </div>
+                                        )
+                                    })}
+                                </CardContent>
+                            </Card>
+                        )}
 
                         {/* Location */}
                         <Card>
