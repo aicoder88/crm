@@ -51,7 +51,7 @@ export function useInvoices(filters?: InvoiceFilters) {
         } finally {
             setLoading(false);
         }
-    }, [filters, supabase]);
+    }, [filters]);
 
     useEffect(() => {
         fetchInvoices();
@@ -109,7 +109,7 @@ export function useInvoice(id: string | null) {
         } finally {
             setLoading(false);
         }
-    }, [id, supabase]);
+    }, [id]);
 
     useEffect(() => {
         if (!id) {

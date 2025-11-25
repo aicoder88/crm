@@ -4,11 +4,12 @@ import { useEffect, useState } from "react"
 import { DataTable } from "@/components/ui/data-table"
 import { columns } from "./columns"
 import { Customer } from "@/types"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Plus, Upload } from "lucide-react"
 
 export default function CustomersPage() {
+    const supabase = createClient()
     const [data, setData] = useState<Customer[]>([])
     const [loading, setLoading] = useState(true)
 

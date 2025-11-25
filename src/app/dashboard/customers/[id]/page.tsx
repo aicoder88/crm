@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,6 +15,7 @@ import { CustomerContacts } from "@/components/customer-contacts"
 import { CustomerTimeline } from "@/components/customer-timeline"
 
 export default function CustomerDetailPage() {
+    const supabase = createClient()
     const params = useParams()
     const id = params.id as string
     const [customer, setCustomer] = useState<Customer | null>(null)

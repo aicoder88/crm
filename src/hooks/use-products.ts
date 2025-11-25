@@ -26,7 +26,7 @@ export function useProducts() {
         } finally {
             setLoading(false);
         }
-    }, [supabase]);
+    }, []);
 
     useEffect(() => {
         fetchProducts();
@@ -115,7 +115,7 @@ export function useProduct(id: string | null) {
         } finally {
             setLoading(false);
         }
-    }, [id, supabase]);
+    }, [id]);
 
     useEffect(() => {
         if (!id) {

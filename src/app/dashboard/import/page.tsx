@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Papa from "papaparse"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Upload, CheckCircle, AlertCircle, FileText } from "lucide-react"
 
 export default function ImportPage() {
+    const supabase = createClient()
     const [file, setFile] = useState<File | null>(null)
     const [preview, setPreview] = useState<any[]>([])
     const [uploading, setUploading] = useState(false)
