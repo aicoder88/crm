@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client';
 import { Deal, DealStage } from '@/types';
 import { toast } from 'sonner';
 
@@ -13,6 +13,7 @@ export function useDealStages() {
 
     async function fetchStages() {
         try {
+            const supabase = createClient();
             const { data, error } = await supabase
                 .from('deal_stages')
                 .select('*')
@@ -41,6 +42,7 @@ export function useDeals(customerId?: string) {
 
     async function fetchDeals() {
         try {
+            const supabase = createClient();
             let query = supabase
                 .from('deals')
                 .select('*, customer:customers(store_name)')
@@ -64,6 +66,7 @@ export function useDeals(customerId?: string) {
 
     async function createDeal(deal: Partial<Deal>) {
         try {
+            const supabase = createClient();
             const { data, error } = await supabase
                 .from('deals')
                 .insert([deal])
@@ -84,6 +87,7 @@ export function useDeals(customerId?: string) {
 
     async function updateDeal(id: string, updates: Partial<Deal>) {
         try {
+            const supabase = createClient();
             const { data, error } = await supabase
                 .from('deals')
                 .update(updates)
@@ -108,6 +112,7 @@ export function useDeals(customerId?: string) {
 
     async function deleteDeal(id: string) {
         try {
+            const supabase = createClient();
             const { error } = await supabase
                 .from('deals')
                 .delete()

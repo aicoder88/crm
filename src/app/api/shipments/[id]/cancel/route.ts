@@ -3,7 +3,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/server';
 import { cancelShipment as cancelNetParcelShipment } from '@/lib/netparcel';
 
 export async function POST(
@@ -12,7 +12,13 @@ export async function POST(
 ) {
     try {
         const { id } = await params;
-        const supabase = createClient();
+        const supabase = await createClient();
+        
+        // Add auth check at the start
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
         // Get shipment
         const { data: shipment, error: shipmentError } = await supabase

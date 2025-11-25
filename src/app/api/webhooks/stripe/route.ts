@@ -55,7 +55,6 @@ export async function POST(req: NextRequest) {
                     );
                 }
 
-                console.log(`Invoice ${invoice.id} marked as paid`);
                 break;
             }
 
@@ -63,7 +62,6 @@ export async function POST(req: NextRequest) {
                 const invoice = event.data.object as Stripe.Invoice;
 
                 // Optionally update invoice status or log the failure
-                console.log(`Payment failed for invoice ${invoice.id}`);
                 break;
             }
 
@@ -84,7 +82,6 @@ export async function POST(req: NextRequest) {
                     console.error('Error updating invoice sent date:', error);
                 }
 
-                console.log(`Invoice ${invoice.id} sent`);
                 break;
             }
 
@@ -103,12 +100,10 @@ export async function POST(req: NextRequest) {
                     console.error('Error updating invoice PDF:', error);
                 }
 
-                console.log(`Invoice ${invoice.id} finalized`);
                 break;
             }
 
             default:
-                console.log(`Unhandled event type: ${event.type}`);
         }
 
         return NextResponse.json({ received: true });

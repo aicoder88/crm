@@ -15,8 +15,6 @@ export function CustomersTable({ customers }: CustomersTableProps) {
     const [filters, setFilters] = useState<CustomerFilters>({})
 
     const filteredCustomers = useMemo(() => {
-        console.log('CustomersTable received:', customers.length, 'customers')
-        console.log('Active filters:', filters)
         let filtered = customers
 
         // Status filter
@@ -94,7 +92,6 @@ export function CustomersTable({ customers }: CustomersTableProps) {
             })
         }
 
-        console.log('Filtered customers:', filtered.length)
         return filtered
     }, [customers, filters])
 

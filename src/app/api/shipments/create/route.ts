@@ -3,11 +3,19 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/server';
 import { createShipment as createNetParcelShipment } from '@/lib/netparcel';
 
 export async function POST(request: NextRequest) {
     try {
+        const supabase = await createClient();
+        
+        // Add auth check at the start
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const body = await request.json();
         const {
             customer_id,
@@ -28,8 +36,6 @@ export async function POST(request: NextRequest) {
                 { status: 400 }
             );
         }
-
-        const supabase = createClient();
 
         // Get customer info
         const { data: customer, error: customerError } = await supabase

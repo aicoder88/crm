@@ -29,7 +29,6 @@ export async function POST(request: NextRequest) {
             // Verify the webhook using Svix headers (Resend uses Svix for webhooks)
             // In production, you should verify the signature here
             // For now, we log a warning if the secret is set but verification isn't implemented
-            console.log('Webhook signature verification enabled - signature present');
         }
 
         const supabase = await createClient();

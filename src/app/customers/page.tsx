@@ -9,7 +9,6 @@ export default async function CustomersPage() {
     const supabase = await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
-    console.log('Current user:', user?.email || 'Not authenticated')
 
     const { data: customers, error } = await supabase
         .from("customers")
@@ -46,9 +45,6 @@ export default async function CustomersPage() {
         social_media: c.customer_social_media || []
     })) || []
 
-    console.log('Customers from DB:', customers?.length)
-    console.log('Transformed customers:', transformedCustomers.length)
-    console.log('Sample customer:', transformedCustomers[0])
 
     return (
         <div className="space-y-6">

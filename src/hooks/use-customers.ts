@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client';
 import { Customer } from '@/types';
 import { toast } from 'sonner';
 
@@ -13,6 +13,7 @@ export function useCustomers() {
 
     async function fetchCustomers() {
         try {
+            const supabase = createClient();
             const { data, error } = await supabase
                 .from('customers')
                 .select('id, store_name')

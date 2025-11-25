@@ -6,6 +6,12 @@ import { renderTemplate, formatEmailDate, formatCurrency } from '@/lib/email-tem
 export async function POST(request: NextRequest) {
     try {
         const supabase = await createClient();
+        
+        // Add auth check at the start
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
         // Parse request body
         const { customerId, templateId, to, subject, body, context } = await request.json();
