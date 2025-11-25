@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendEmail } from '@/lib/resend-client';
 import { renderTemplate, formatEmailDate, formatCurrency } from '@/lib/email-templates';
+import { withRateLimit } from '@/lib/with-rate-limit';
 
-export async function POST(request: NextRequest) {
+async function handler(request: NextRequest) {
     try {
         const supabase = await createClient();
         
@@ -114,3 +115,5 @@ export async function POST(request: NextRequest) {
         );
     }
 }
+
+export const POST = withRateLimit(handler, 'email');

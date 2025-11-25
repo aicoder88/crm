@@ -4,6 +4,7 @@ import React, { Component, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import * as Sentry from "@sentry/nextjs";
 
 interface Props {
     children: ReactNode;
@@ -28,15 +29,14 @@ export class ErrorBoundary extends Component<Props, State> {
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
         console.error('ErrorBoundary caught an error:', error, errorInfo);
 
-        // Log to error tracking service if available
-        if (typeof window !== 'undefined') {
-            // Could integrate with Sentry, LogRocket, etc.
-            console.error('Error details:', {
-                error: error.toString(),
+        // Report to Sentry
+        Sentry.withScope((scope) => {
+            scope.setTag("errorBoundary", true);
+            scope.setContext("errorInfo", {
                 componentStack: errorInfo.componentStack,
-                timestamp: new Date().toISOString(),
             });
-        }
+            Sentry.captureException(error);
+        });
     }
 
     handleReset = () => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Customer, Deal, Invoice, Shipment } from '@/types';
 import {
@@ -33,11 +33,7 @@ export function useDashboardMetrics(periodDays: number = 30) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchMetrics();
-    }, [periodDays]);
-
-    async function fetchMetrics() {
+    const fetchMetrics = useCallback(async () => {
         try {
             setLoading(true);
             const supabase = createClient();
@@ -116,7 +112,11 @@ export function useDashboardMetrics(periodDays: number = 30) {
         } finally {
             setLoading(false);
         }
-    }
+    }, [periodDays]);
+
+    useEffect(() => {
+        fetchMetrics();
+    }, [fetchMetrics]);
 
     return { metrics, loading, error, refresh: fetchMetrics };
 }
@@ -141,11 +141,7 @@ export function useSalesAnalytics() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchAnalytics();
-    }, []);
-
-    async function fetchAnalytics() {
+    const fetchAnalytics = useCallback(async () => {
         try {
             setLoading(true);
             const supabase = createClient();
@@ -198,7 +194,11 @@ export function useSalesAnalytics() {
         } finally {
             setLoading(false);
         }
-    }
+    }, []);
+
+    useEffect(() => {
+        fetchAnalytics();
+    }, [fetchAnalytics]);
 
     return { analytics, loading, error, refresh: fetchAnalytics };
 }
@@ -217,11 +217,7 @@ export function useCustomerAnalytics() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchAnalytics();
-    }, []);
-
-    async function fetchAnalytics() {
+    const fetchAnalytics = useCallback(async () => {
         try {
             setLoading(true);
             const supabase = createClient();
@@ -293,7 +289,11 @@ export function useCustomerAnalytics() {
         } finally {
             setLoading(false);
         }
-    }
+    }, []);
+
+    useEffect(() => {
+        fetchAnalytics();
+    }, [fetchAnalytics]);
 
     return { analytics, loading, error, refresh: fetchAnalytics };
 }
@@ -318,11 +318,7 @@ export function useFinancialAnalytics() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchAnalytics();
-    }, []);
-
-    async function fetchAnalytics() {
+    const fetchAnalytics = useCallback(async () => {
         try {
             setLoading(true);
             const supabase = createClient();
@@ -421,7 +417,11 @@ export function useFinancialAnalytics() {
         } finally {
             setLoading(false);
         }
-    }
+    }, []);
+
+    useEffect(() => {
+        fetchAnalytics();
+    }, [fetchAnalytics]);
 
     return { analytics, loading, error, refresh: fetchAnalytics };
 }
@@ -440,11 +440,7 @@ export function useOperationalAnalytics() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchAnalytics();
-    }, []);
-
-    async function fetchAnalytics() {
+    const fetchAnalytics = useCallback(async () => {
         try {
             setLoading(true);
             const supabase = createClient();
@@ -516,7 +512,11 @@ export function useOperationalAnalytics() {
         } finally {
             setLoading(false);
         }
-    }
+    }, []);
+
+    useEffect(() => {
+        fetchAnalytics();
+    }, [fetchAnalytics]);
 
     return { analytics, loading, error, refresh: fetchAnalytics };
 }

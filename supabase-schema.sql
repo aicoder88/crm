@@ -204,6 +204,20 @@ CREATE TABLE deals (
 -- FINANCIAL TABLES
 -- ==========================================
 
+-- Products table
+CREATE TABLE products (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  sku TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  description TEXT,
+  unit_price DECIMAL(10, 2) NOT NULL,
+  currency TEXT DEFAULT 'CAD',
+  active BOOLEAN DEFAULT true,
+  stripe_price_id TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Invoices
 CREATE TABLE invoices (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -281,6 +295,10 @@ CREATE INDEX idx_tasks_reminder ON tasks(reminder_time) WHERE status = 'pending'
 CREATE INDEX idx_deals_customer ON deals(customer_id);
 CREATE INDEX idx_deals_stage ON deals(stage);
 CREATE INDEX idx_deals_expected_close ON deals(expected_close_date);
+
+-- Products
+CREATE INDEX idx_products_sku ON products(sku);
+CREATE INDEX idx_products_active ON products(active) WHERE active = true;
 
 -- Invoices
 CREATE INDEX idx_invoices_customer_status ON invoices(customer_id, status);

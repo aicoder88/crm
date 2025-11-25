@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { KanbanBoard } from '@/components/deals/kanban-board';
@@ -13,6 +13,12 @@ export default function DealsPage() {
     const { deals, loading: dealsLoading, createDeal, updateDeal, deleteDeal } = useDeals();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedDeal, setSelectedDeal] = useState<Deal | undefined>(undefined);
+    const [optimisticDeals, setOptimisticDeals] = useState<Deal[]>([]);
+
+    // Sync optimistic deals with actual deals
+    useEffect(() => {
+        setOptimisticDeals(deals);
+    }, [deals]);
 
     const handleDealClick = (deal: Deal) => {
         setSelectedDeal(deal);
@@ -32,6 +38,16 @@ export default function DealsPage() {
         if (!open) {
             setSelectedDeal(undefined);
         }
+    };
+
+    const handleOptimisticUpdate = (id: string, updates: Partial<Deal>) => {
+        setOptimisticDeals(prev => 
+            prev.map(deal => 
+                deal.id === id 
+                    ? { ...deal, ...updates }
+                    : deal
+            )
+        );
     };
 
     if (stagesLoading || dealsLoading) {
@@ -58,9 +74,10 @@ export default function DealsPage() {
 
             <KanbanBoard
                 stages={stages}
-                deals={deals}
+                deals={optimisticDeals}
                 onDealUpdate={updateDeal}
                 onDealClick={handleDealClick}
+                onOptimisticUpdate={handleOptimisticUpdate}
             />
 
             <DealDialog

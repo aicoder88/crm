@@ -59,6 +59,8 @@ export function DataTable<TData, TValue>({
     const [columnVisibility, setColumnVisibility] =
         React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
+    const [focusedRowIndex, setFocusedRowIndex] = React.useState<number>(0)
+    const tableRef = React.useRef<HTMLDivElement>(null)
 
     const table = useReactTable({
         data,
@@ -79,8 +81,90 @@ export function DataTable<TData, TValue>({
         },
     })
 
+    const visibleRows = table.getRowModel().rows
+    
+    // Reset focus when data changes
+    React.useEffect(() => {
+        setFocusedRowIndex(0)
+    }, [data])
+
+    // Keyboard navigation handler
+    const handleKeyDown = React.useCallback((event: React.KeyboardEvent) => {
+        if (!visibleRows.length) return
+
+        const rowCount = visibleRows.length
+        
+        switch (event.key) {
+            case 'ArrowDown':
+                event.preventDefault()
+                setFocusedRowIndex(prev => Math.min(prev + 1, rowCount - 1))
+                break
+                
+            case 'ArrowUp':
+                event.preventDefault()
+                setFocusedRowIndex(prev => Math.max(prev - 1, 0))
+                break
+                
+            case 'Home':
+                event.preventDefault()
+                setFocusedRowIndex(0)
+                break
+                
+            case 'End':
+                event.preventDefault()
+                setFocusedRowIndex(rowCount - 1)
+                break
+                
+            case 'PageDown':
+                event.preventDefault()
+                setFocusedRowIndex(prev => Math.min(prev + 10, rowCount - 1))
+                break
+                
+            case 'PageUp':
+                event.preventDefault()
+                setFocusedRowIndex(prev => Math.max(prev - 10, 0))
+                break
+                
+            case 'Enter':
+                event.preventDefault()
+                if (focusedRowIndex < rowCount) {
+                    const row = visibleRows[focusedRowIndex]
+                    row.toggleSelected()
+                }
+                break
+                
+            case ' ':
+                event.preventDefault()
+                if (focusedRowIndex < rowCount) {
+                    const row = visibleRows[focusedRowIndex]
+                    row.toggleSelected()
+                }
+                break
+                
+            case 'a':
+                if (event.ctrlKey || event.metaKey) {
+                    event.preventDefault()
+                    table.toggleAllRowsSelected()
+                }
+                break
+        }
+    }, [focusedRowIndex, visibleRows, table])
+
+    // Focus table on click
+    const handleTableClick = () => {
+        tableRef.current?.focus()
+    }
+
     return (
-        <div className="w-full">
+        <div 
+            className="w-full"
+            ref={tableRef}
+            tabIndex={0}
+            onKeyDown={handleKeyDown}
+            onClick={handleTableClick}
+            role="grid"
+            aria-label="Data table with keyboard navigation"
+        >
             <div className="flex items-center py-4 gap-2">
                 {searchKey && (
                     <Input
@@ -93,6 +177,9 @@ export function DataTable<TData, TValue>({
                     />
                 )}
                 {filterComponent}
+                <div className="text-xs text-muted-foreground hidden md:block">
+                    ↑↓ Navigate • Space/Enter Select • Ctrl+A Select All
+                </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto">
@@ -141,14 +228,27 @@ export function DataTable<TData, TValue>({
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
+                        {visibleRows?.length ? (
+                            visibleRows.map((row, index) => (
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
+                                    className={`${
+                                        index === focusedRowIndex 
+                                            ? 'ring-2 ring-primary ring-inset bg-primary/5' 
+                                            : ''
+                                    } cursor-pointer transition-colors hover:bg-muted/50`}
+                                    onClick={() => {
+                                        setFocusedRowIndex(index)
+                                        row.toggleSelected()
+                                    }}
+                                    role="row"
+                                    aria-selected={row.getIsSelected()}
+                                    aria-rowindex={index + 1}
+                                    tabIndex={index === focusedRowIndex ? 0 : -1}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell key={cell.id} role="gridcell">
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext()
@@ -207,6 +307,12 @@ export function DataTable<TData, TValue>({
                         size="sm"
                         onClick={() => table.previousPage()}
                         disabled={!table.getCanPreviousPage()}
+                        onKeyDown={(e) => {
+                            if (e.key === 'ArrowLeft') {
+                                e.preventDefault()
+                                table.previousPage()
+                            }
+                        }}
                     >
                         Previous
                     </Button>
@@ -215,6 +321,12 @@ export function DataTable<TData, TValue>({
                         size="sm"
                         onClick={() => table.nextPage()}
                         disabled={!table.getCanNextPage()}
+                        onKeyDown={(e) => {
+                            if (e.key === 'ArrowRight') {
+                                e.preventDefault()
+                                table.nextPage()
+                            }
+                        }}
                     >
                         Next
                     </Button>

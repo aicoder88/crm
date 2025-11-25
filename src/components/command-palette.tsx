@@ -27,7 +27,12 @@ import {
   CheckSquare,
   Tag,
   Truck,
+  Database,
+  Loader2,
 } from "lucide-react";
+import { GlobalSearch } from "./global-search";
+import { Badge } from "@/components/ui/badge";
+import { useGlobalSearch } from "@/hooks/use-global-search";
 
 interface CommandItem {
   id: string;
@@ -39,13 +44,22 @@ interface CommandItem {
 
 export function CommandPalette() {
   const [open, setOpen] = React.useState(false);
+  const [searchOpen, setSearchOpen] = React.useState(false);
+  const [searchMode, setSearchMode] = React.useState(false);
   const router = useRouter();
+  const { searchState } = useGlobalSearch();
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((open) => !open);
+        if (e.shiftKey) {
+          // Cmd/Ctrl + Shift + K for global search
+          setSearchOpen(true);
+        } else {
+          // Cmd/Ctrl + K for command palette
+          setOpen((open) => !open);
+        }
       }
     };
 
@@ -54,6 +68,15 @@ export function CommandPalette() {
   }, []);
 
   const commands: CommandItem[] = [
+    // Search
+    {
+      id: "search-global",
+      label: "Global Search",
+      icon: <Database className="mr-2 h-4 w-4" />,
+      action: () => setSearchOpen(true),
+      keywords: ["find", "search", "lookup", "data"],
+    },
+    
     // Navigation
     {
       id: "nav-dashboard",
@@ -136,24 +159,51 @@ export function CommandPalette() {
 
   return (
     <>
-      {/* Keyboard Hint */}
-      <button
-        onClick={() => setOpen(true)}
-        className="hidden lg:flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md border border-border/40 hover:border-border hover:bg-accent/50"
-      >
-        <Search className="h-4 w-4" />
-        <span>Search...</span>
-        <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center gap-1 rounded border border-border/60 bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
-          <span className="text-xs">⌘</span>K
-        </kbd>
-      </button>
+      {/* Keyboard Hints */}
+      <div className="hidden lg:flex items-center gap-2">
+        <button
+          onClick={() => setOpen(true)}
+          className="flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md border border-border/40 hover:border-border hover:bg-accent/50"
+        >
+          <Search className="h-4 w-4" />
+          <span>Commands</span>
+          <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center gap-1 rounded border border-border/60 bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+            <span className="text-xs">⌘</span>K
+          </kbd>
+        </button>
+        
+        <button
+          onClick={() => setSearchOpen(true)}
+          className="flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md border border-border/40 hover:border-border hover:bg-accent/50"
+        >
+          <Database className="h-4 w-4" />
+          <span>Search Data</span>
+          <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center gap-1 rounded border border-border/60 bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+            <span className="text-xs">⌘⇧</span>K
+          </kbd>
+        </button>
+      </div>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Type a command or search..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Search">
+            <CommandItem
+              key={commands[0].id}
+              onSelect={() => runCommand(commands[0])}
+              className="cursor-pointer"
+            >
+              {commands[0].icon}
+              {commands[0].label}
+              <Badge variant="secondary" className="ml-auto text-xs">
+                ⌘⇧K
+              </Badge>
+            </CommandItem>
+          </CommandGroup>
+          <CommandSeparator />
           <CommandGroup heading="Navigation">
-            {commands.slice(0, 8).map((command) => (
+            {commands.slice(1, 9).map((command) => (
               <CommandItem
                 key={command.id}
                 onSelect={() => runCommand(command)}
@@ -166,7 +216,7 @@ export function CommandPalette() {
           </CommandGroup>
           <CommandSeparator />
           <CommandGroup heading="Quick Actions">
-            {commands.slice(8).map((command) => (
+            {commands.slice(9).map((command) => (
               <CommandItem
                 key={command.id}
                 onSelect={() => runCommand(command)}
@@ -179,6 +229,8 @@ export function CommandPalette() {
           </CommandGroup>
         </CommandList>
       </CommandDialog>
+
+      <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
     </>
   );
 }

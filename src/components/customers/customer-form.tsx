@@ -35,12 +35,22 @@ const formSchema = z.object({
     }),
     status: z.enum(["Qualified", "Interested", "Not Qualified", "Not Interested", "Dog Store"]),
     email: z.string().email().optional().or(z.literal("")),
-    phone: z.string().optional(),
+    phone: z.string()
+        .regex(/^(\+1)?[\s.-]?\(?[0-9]{3}\)?[\s.-]?[0-9]{3}[\s.-]?[0-9]{4}$/, 
+            'Please enter a valid phone number (e.g., (416) 555-0123)')
+        .optional()
+        .or(z.literal("")),
     website: z.string().url().optional().or(z.literal("")),
     street: z.string().optional(),
     city: z.string().optional(),
-    province: z.string().optional(),
-    postal_code: z.string().optional(),
+    province: z.enum(['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT'])
+        .optional()
+        .or(z.literal("")),
+    postal_code: z.string()
+        .regex(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/, 
+            'Please enter a valid Canadian postal code (e.g., K1A 0A6)')
+        .optional()
+        .or(z.literal("")),
     notes: z.string().optional(),
 })
 
@@ -256,9 +266,28 @@ export function CustomerForm({ customerId, initialData }: CustomerFormProps) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Province</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="ON" {...field} />
-                                    </FormControl>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="ON" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="AB">Alberta</SelectItem>
+                                            <SelectItem value="BC">British Columbia</SelectItem>
+                                            <SelectItem value="MB">Manitoba</SelectItem>
+                                            <SelectItem value="NB">New Brunswick</SelectItem>
+                                            <SelectItem value="NL">Newfoundland and Labrador</SelectItem>
+                                            <SelectItem value="NS">Nova Scotia</SelectItem>
+                                            <SelectItem value="NT">Northwest Territories</SelectItem>
+                                            <SelectItem value="NU">Nunavut</SelectItem>
+                                            <SelectItem value="ON">Ontario</SelectItem>
+                                            <SelectItem value="PE">Prince Edward Island</SelectItem>
+                                            <SelectItem value="QC">Quebec</SelectItem>
+                                            <SelectItem value="SK">Saskatchewan</SelectItem>
+                                            <SelectItem value="YT">Yukon</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
                             )}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { Product } from '@/types';
 
@@ -10,11 +10,7 @@ export function useProducts() {
     const [error, setError] = useState<Error | null>(null);
     const supabase = createClient();
 
-    useEffect(() => {
-        fetchProducts();
-    }, []);
-
-    async function fetchProducts() {
+    const fetchProducts = useCallback(async () => {
         try {
             setLoading(true);
             const { data, error } = await supabase
@@ -30,7 +26,11 @@ export function useProducts() {
         } finally {
             setLoading(false);
         }
-    }
+    }, [supabase]);
+
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
 
     async function createProduct(product: Omit<Product, 'id' | 'created_at' | 'updated_at'>) {
         try {
@@ -97,17 +97,7 @@ export function useProduct(id: string | null) {
     const [error, setError] = useState<Error | null>(null);
     const supabase = createClient();
 
-    useEffect(() => {
-        if (!id) {
-            setProduct(null);
-            setLoading(false);
-            return;
-        }
-
-        fetchProduct();
-    }, [id]);
-
-    async function fetchProduct() {
+    const fetchProduct = useCallback(async () => {
         if (!id) return;
 
         try {
@@ -125,7 +115,17 @@ export function useProduct(id: string | null) {
         } finally {
             setLoading(false);
         }
-    }
+    }, [id, supabase]);
+
+    useEffect(() => {
+        if (!id) {
+            setProduct(null);
+            setLoading(false);
+            return;
+        }
+
+        fetchProduct();
+    }, [id, fetchProduct]);
 
     return { product, loading, error, refresh: fetchProduct };
 }

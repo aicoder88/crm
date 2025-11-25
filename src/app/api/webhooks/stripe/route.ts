@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { verifyWebhookSignature } from '@/lib/stripe';
+import { withRateLimit } from '@/lib/with-rate-limit';
 import Stripe from 'stripe';
 
-export async function POST(req: NextRequest) {
+async function handler(req: NextRequest) {
     const supabase = await createClient();
 
     try {
@@ -116,3 +117,5 @@ export async function POST(req: NextRequest) {
         );
     }
 }
+
+export const POST = withRateLimit(handler, 'webhooks');

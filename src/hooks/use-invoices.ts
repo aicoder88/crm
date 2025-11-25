@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { Invoice, InvoiceItem } from '@/types';
 
@@ -17,11 +17,7 @@ export function useInvoices(filters?: InvoiceFilters) {
     const [error, setError] = useState<Error | null>(null);
     const supabase = createClient();
 
-    useEffect(() => {
-        fetchInvoices();
-    }, [filters]);
-
-    async function fetchInvoices() {
+    const fetchInvoices = useCallback(async () => {
         try {
             setLoading(true);
             let query = supabase
@@ -55,7 +51,11 @@ export function useInvoices(filters?: InvoiceFilters) {
         } finally {
             setLoading(false);
         }
-    }
+    }, [filters, supabase]);
+
+    useEffect(() => {
+        fetchInvoices();
+    }, [fetchInvoices]);
 
     return {
         invoices,
@@ -71,17 +71,7 @@ export function useInvoice(id: string | null) {
     const [error, setError] = useState<Error | null>(null);
     const supabase = createClient();
 
-    useEffect(() => {
-        if (!id) {
-            setInvoice(null);
-            setLoading(false);
-            return;
-        }
-
-        fetchInvoice();
-    }, [id]);
-
-    async function fetchInvoice() {
+    const fetchInvoice = useCallback(async () => {
         if (!id) return;
 
         try {
@@ -119,7 +109,17 @@ export function useInvoice(id: string | null) {
         } finally {
             setLoading(false);
         }
-    }
+    }, [id, supabase]);
+
+    useEffect(() => {
+        if (!id) {
+            setInvoice(null);
+            setLoading(false);
+            return;
+        }
+
+        fetchInvoice();
+    }, [id, fetchInvoice]);
 
     async function createInvoice(
         invoice: Omit<Invoice, 'id' | 'created_at' | 'invoice_number'>,
@@ -132,31 +132,35 @@ export function useInvoice(id: string | null) {
 
             if (invoiceNumberError) throw invoiceNumberError;
 
-            // Create invoice
-            const { data: invoiceData, error: invoiceError } = await supabase
+            // Prepare invoice data for the atomic function
+            const invoiceData = {
+                ...invoice,
+                invoice_number: invoiceNumberData,
+            };
+
+            // Use atomic RPC function to create invoice with items
+            const { data: invoiceId, error } = await supabase
+                .rpc('create_invoice_with_items', {
+                    p_invoice: invoiceData,
+                    p_items: items,
+                });
+
+            if (error) throw error;
+
+            // Fetch the created invoice with full details
+            const { data: createdInvoice, error: fetchError } = await supabase
                 .from('invoices')
-                .insert([{
-                    ...invoice,
-                    invoice_number: invoiceNumberData,
-                }])
-                .select()
+                .select(`
+                    *,
+                    customer:customers(store_name, email),
+                    items:invoice_items(*)
+                `)
+                .eq('id', invoiceId)
                 .single();
 
-            if (invoiceError) throw invoiceError;
+            if (fetchError) throw fetchError;
 
-            // Create invoice items
-            const itemsWithInvoiceId = items.map(item => ({
-                ...item,
-                invoice_id: invoiceData.id,
-            }));
-
-            const { error: itemsError } = await supabase
-                .from('invoice_items')
-                .insert(itemsWithInvoiceId);
-
-            if (itemsError) throw itemsError;
-
-            return invoiceData;
+            return createdInvoice;
         } catch (err) {
             throw err;
         }
