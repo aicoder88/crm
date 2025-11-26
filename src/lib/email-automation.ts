@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { renderTemplate, formatCurrency, formatEmailDate } from '@/lib/email-templates';
 import { sendEmail } from '@/lib/resend-client';
 import type { Customer, Invoice, Shipment } from '@/types';
+import { logger } from './logger';
 
 /**
  * Send automated email when an invoice is created
@@ -24,7 +25,7 @@ export async function sendInvoiceEmail(invoice: Invoice, customer: Customer) {
             .single();
 
         if (!template) {
-            console.error('Invoice notification template not found');
+            logger.error('Invoice notification template not found');
             return null;
         }
 
@@ -71,7 +72,7 @@ export async function sendInvoiceEmail(invoice: Invoice, customer: Customer) {
 
         return messageId;
     } catch (error) {
-        console.error('Failed to send invoice email:', error);
+        logger.error('Failed to send invoice email', error instanceof Error ? error : new Error(String(error)));
         throw error;
     }
 }
@@ -97,7 +98,7 @@ export async function sendShipmentEmail(shipment: Shipment, customer: Customer) 
             .single();
 
         if (!template) {
-            console.error('Shipment notification template not found');
+            logger.error('Shipment notification template not found');
             return null;
         }
 
@@ -145,7 +146,7 @@ export async function sendShipmentEmail(shipment: Shipment, customer: Customer) 
 
         return messageId;
     } catch (error) {
-        console.error('Failed to send shipment email:', error);
+        logger.error('Failed to send shipment email', error instanceof Error ? error : new Error(String(error)));
         throw error;
     }
 }
@@ -171,7 +172,7 @@ export async function sendWelcomeEmail(customer: Customer) {
             .single();
 
         if (!template) {
-            console.error('Welcome email template not found');
+            logger.error('Welcome email template not found');
             return null;
         }
 
@@ -212,7 +213,7 @@ export async function sendWelcomeEmail(customer: Customer) {
 
         return messageId;
     } catch (error) {
-        console.error('Failed to send welcome email:', error);
+        logger.error('Failed to send welcome email', error instanceof Error ? error : new Error(String(error)));
         throw error;
     }
 }

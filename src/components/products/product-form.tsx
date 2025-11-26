@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { createClient } from '@/lib/supabase/client';
 import type { Product } from '@/types';
 import { Loader2 } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 const formSchema = z.object({
     sku: z.string().min(1, 'SKU is required'),
@@ -72,7 +73,10 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
 
             onSuccess?.();
         } catch (error) {
-            console.error('Error saving product:', error);
+            logger.error('Error saving product', error instanceof Error ? error : new Error(String(error)), {
+                productId: product?.id,
+                operation: product ? 'update' : 'create'
+            });
         } finally {
             setLoading(false);
         }

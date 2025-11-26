@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useNotifications } from './useNotifications';
 import { Task } from '@/types';
+import { logger } from '@/lib/logger';
 
 export function useTaskReminders() {
     const { showNotification, permission } = useNotifications();
@@ -30,7 +31,7 @@ export function useTaskReminders() {
                     .lte('reminder_time', now);
 
                 if (error) {
-                    console.error('Error fetching task reminders:', error);
+                    logger.error('Error fetching task reminders', error instanceof Error ? error : new Error(String(error)));
                     return;
                 }
 
@@ -71,7 +72,7 @@ export function useTaskReminders() {
                         .eq('id', task.id);
                 }
             } catch (error) {
-                console.error('Error checking task reminders:', error);
+                logger.error('Error checking task reminders', error instanceof Error ? error : new Error(String(error)));
             }
         };
 

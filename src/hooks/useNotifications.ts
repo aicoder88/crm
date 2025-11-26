@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { logger } from '@/lib/logger';
 
 export type NotificationPermission = 'granted' | 'denied' | 'default';
 
@@ -27,7 +28,7 @@ export function useNotifications() {
             setPermission(result);
             return result;
         } catch (error) {
-            console.error('Error requesting notification permission:', error);
+            logger.error('Error requesting notification permission', error instanceof Error ? error : new Error(String(error)));
             return 'denied';
         }
     };
@@ -55,7 +56,7 @@ export function useNotifications() {
 
             return notification;
         } catch (error) {
-            console.error('Error showing notification:', error);
+            logger.error('Error showing notification', error instanceof Error ? error : new Error(String(error)));
             return null;
         }
     };

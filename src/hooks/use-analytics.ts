@@ -14,6 +14,7 @@ import {
     type RevenueDataPoint,
     type RFMSegment
 } from '@/lib/analytics-utils';
+import { logger } from '@/lib/logger';
 
 export interface DashboardMetrics {
     totalCustomers: number;
@@ -107,7 +108,7 @@ export function useDashboardMetrics(periodDays: number = 30) {
 
             setError(null);
         } catch (err) {
-            console.error('Error fetching dashboard metrics:', err);
+            logger.error('Error fetching dashboard metrics', err instanceof Error ? err : new Error(String(err)));
             setError(err instanceof Error ? err.message : 'Failed to load metrics');
         } finally {
             setLoading(false);
@@ -189,7 +190,7 @@ export function useSalesAnalytics() {
 
             setError(null);
         } catch (err) {
-            console.error('Error fetching sales analytics:', err);
+            logger.error('Error fetching sales analytics', err instanceof Error ? err : new Error(String(err)));
             setError(err instanceof Error ? err.message : 'Failed to load sales analytics');
         } finally {
             setLoading(false);
@@ -284,7 +285,7 @@ export function useCustomerAnalytics() {
 
             setError(null);
         } catch (err) {
-            console.error('Error fetching customer analytics:', err);
+            logger.error('Error fetching customer analytics', err instanceof Error ? err : new Error(String(err)));
             setError(err instanceof Error ? err.message : 'Failed to load customer analytics');
         } finally {
             setLoading(false);
@@ -412,7 +413,7 @@ export function useFinancialAnalytics() {
 
             setError(null);
         } catch (err) {
-            console.error('Error fetching financial analytics:', err);
+            logger.error('Error fetching financial analytics', err instanceof Error ? err : new Error(String(err)));
             setError(err instanceof Error ? err.message : 'Failed to load financial analytics');
         } finally {
             setLoading(false);
@@ -507,7 +508,7 @@ export function useOperationalAnalytics() {
 
             setError(null);
         } catch (err) {
-            console.error('Error fetching operational analytics:', err);
+            logger.error('Error fetching operational analytics', err instanceof Error ? err : new Error(String(err)));
             setError(err instanceof Error ? err.message : 'Failed to load operational analytics');
         } finally {
             setLoading(false);

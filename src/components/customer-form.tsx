@@ -29,6 +29,7 @@ import { TagSelector } from "./tag-selector"
 import { Customer } from "@/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { logger } from "@/lib/logger"
 
 const formSchema = z.object({
     store_name: z.string().min(2, {
@@ -205,7 +206,10 @@ export function CustomerForm({ initialData, customerId }: CustomerFormProps) {
             router.push("/dashboard/customers")
             router.refresh()
         } catch (error) {
-            console.error("Error saving customer:", error)
+            logger.error('Error saving customer', error instanceof Error ? error : new Error(String(error)), {
+                customerId,
+                operation: customerId ? 'update' : 'create'
+            });
         } finally {
             setLoading(false)
         }

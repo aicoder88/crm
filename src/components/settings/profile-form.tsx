@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useUser } from '@/hooks/use-user';
 import { useEffect } from 'react';
+import { logger } from '@/lib/logger';
 
 const profileFormSchema = z.object({
     fullName: z.string().min(2, {
@@ -65,7 +66,7 @@ export function ProfileForm() {
 
             toast.success('Profile updated successfully.');
         } catch (error) {
-            console.error(error);
+            logger.error('Failed to update profile', error instanceof Error ? error : new Error(String(error)));
             toast.error('Failed to update profile.');
         }
     }

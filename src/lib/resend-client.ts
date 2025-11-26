@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { env } from './env';
+import { logger } from './logger';
 
 // Validate Resend configuration on module load
 if (!env.resend.apiKey) {
@@ -57,7 +58,7 @@ export async function sendEmail(params: SendEmailParams): Promise<string> {
 
         return data.id;
     } catch (error) {
-        console.error('Failed to send email:', error);
+        logger.error('Failed to send email', error instanceof Error ? error : new Error(String(error)));
         throw error;
     }
 }
@@ -97,7 +98,7 @@ export async function sendBatchEmails(emails: SendEmailParams[]): Promise<string
 
         return (data as unknown as any[]).map((item: { id: string }) => item.id);
     } catch (error) {
-        console.error('Failed to send batch emails:', error);
+        logger.error('Failed to send batch emails', error instanceof Error ? error : new Error(String(error)));
         throw error;
     }
 }
@@ -118,7 +119,7 @@ export async function getEmailStatus(emailId: string) {
 
         return data;
     } catch (error) {
-        console.error('Failed to get email status:', error);
+        logger.error('Failed to get email status', error instanceof Error ? error : new Error(String(error)));
         throw error;
     }
 }

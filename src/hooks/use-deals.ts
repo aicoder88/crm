@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Deal, DealStage } from '@/types';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export function useDealStages() {
     const [stages, setStages] = useState<DealStage[]>([]);
@@ -22,7 +23,7 @@ export function useDealStages() {
             if (error) throw error;
             setStages(data || []);
         } catch (error) {
-            console.error('Error fetching deal stages:', error);
+            logger.error('Error fetching deal stages', error instanceof Error ? error : new Error(String(error)));
             toast.error('Failed to load deal stages');
         } finally {
             setLoading(false);
@@ -57,7 +58,7 @@ export function useDeals(customerId?: string) {
             if (error) throw error;
             setDeals(data || []);
         } catch (error) {
-            console.error('Error fetching deals:', error);
+            logger.error('Error fetching deals', error instanceof Error ? error : new Error(String(error)));
             toast.error('Failed to load deals');
         } finally {
             setLoading(false);
@@ -79,7 +80,7 @@ export function useDeals(customerId?: string) {
             toast.success('Deal created successfully');
             return data;
         } catch (error) {
-            console.error('Error creating deal:', error);
+            logger.error('Error creating deal', error instanceof Error ? error : new Error(String(error)));
             toast.error('Failed to create deal');
             throw error;
         }
@@ -104,7 +105,7 @@ export function useDeals(customerId?: string) {
             }
             return data;
         } catch (error) {
-            console.error('Error updating deal:', error);
+            logger.error('Error updating deal', error instanceof Error ? error : new Error(String(error)));
             toast.error('Failed to update deal');
             throw error;
         }
@@ -123,7 +124,7 @@ export function useDeals(customerId?: string) {
             setDeals(deals.filter(d => d.id !== id));
             toast.success('Deal deleted successfully');
         } catch (error) {
-            console.error('Error deleting deal:', error);
+            logger.error('Error deleting deal', error instanceof Error ? error : new Error(String(error)));
             toast.error('Failed to delete deal');
             throw error;
         }

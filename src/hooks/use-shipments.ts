@@ -7,6 +7,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { Shipment, ShipmentEvent, ShipmentStatus } from '@/types';
+import { logger } from '@/lib/logger';
 
 const supabase = createClient();
 
@@ -43,7 +44,7 @@ export function useShipments(customerId?: string) {
             setShipments(data || []);
         } catch (err: any) {
             setError(err.message);
-            console.error('Error fetching shipments:', err);
+            logger.error('Error fetching shipments', err instanceof Error ? err : new Error(String(err)));
         } finally {
             setLoading(false);
         }
@@ -66,7 +67,7 @@ export function useShipments(customerId?: string) {
             setShipments([data, ...shipments]);
             return data;
         } catch (err: any) {
-            console.error('Error creating shipment:', err);
+            logger.error('Error creating shipment', err instanceof Error ? err : new Error(String(err)));
             throw err;
         }
     }
@@ -89,7 +90,7 @@ export function useShipments(customerId?: string) {
             setShipments(shipments.map(s => s.id === id ? data : s));
             return data;
         } catch (err: any) {
-            console.error('Error updating shipment:', err);
+            logger.error('Error updating shipment', err instanceof Error ? err : new Error(String(err)));
             throw err;
         }
     }
@@ -105,7 +106,7 @@ export function useShipments(customerId?: string) {
 
             setShipments(shipments.filter(s => s.id !== id));
         } catch (err: any) {
-            console.error('Error deleting shipment:', err);
+            logger.error('Error deleting shipment', err instanceof Error ? err : new Error(String(err)));
             throw err;
         }
     }
@@ -155,7 +156,7 @@ export function useShipment(shipmentId: string | null) {
             setShipment(data);
         } catch (err: any) {
             setError(err.message);
-            console.error('Error fetching shipment:', err);
+            logger.error('Error fetching shipment', err instanceof Error ? err : new Error(String(err)));
         } finally {
             setLoading(false);
         }
@@ -174,7 +175,7 @@ export function useShipment(shipmentId: string | null) {
             if (fetchError) throw fetchError;
             setEvents(data || []);
         } catch (err: any) {
-            console.error('Error fetching shipment events:', err);
+            logger.error('Error fetching shipment events', err instanceof Error ? err : new Error(String(err)));
         }
     }
 
@@ -206,7 +207,7 @@ export function useShipment(shipmentId: string | null) {
             await fetchShipment();
             await fetchShipmentEvents();
         } catch (err: any) {
-            console.error('Error updating shipment status:', err);
+            logger.error('Error updating shipment status', err instanceof Error ? err : new Error(String(err)));
             throw err;
         }
     }
@@ -234,7 +235,7 @@ export function useShipment(shipmentId: string | null) {
 
             return data;
         } catch (err: any) {
-            console.error('Error refreshing tracking:', err);
+            logger.error('Error refreshing tracking', err instanceof Error ? err : new Error(String(err)));
             throw err;
         }
     }
@@ -255,7 +256,7 @@ export function useShipment(shipmentId: string | null) {
 
             await fetchShipment();
         } catch (err: any) {
-            console.error('Error cancelling shipment:', err);
+            logger.error('Error cancelling shipment', err instanceof Error ? err : new Error(String(err)));
             throw err;
         }
     }

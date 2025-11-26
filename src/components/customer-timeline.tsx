@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Phone, Mail, FileText, DollarSign, Package, Calendar } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
+import { logger } from '@/lib/logger';
 
 interface CustomerTimelineProps {
     customerId: string
@@ -26,7 +27,7 @@ export function CustomerTimeline({ customerId }: CustomerTimelineProps) {
                 .order("created_at", { ascending: false })
 
             if (error) {
-                console.error("Error fetching timeline:", error)
+                logger.error("Error fetching timeline", error instanceof Error ? error : new Error(String(error)));
             } else {
                 setEvents(data as TimelineEvent[])
             }

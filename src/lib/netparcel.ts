@@ -3,6 +3,8 @@
  * Handles shipping operations with NetParcel API
  */
 
+import { logger } from './logger';
+
 export interface NetParcelConfig {
     apiKey: string;
     accountId: string;
@@ -114,7 +116,7 @@ export async function createShipment(
 
         return response;
     } catch (error) {
-        console.error('NetParcel createShipment error:', error);
+        logger.error('NetParcel createShipment error', error instanceof Error ? error : new Error(String(error)));
         throw error;
     }
 }
@@ -132,7 +134,7 @@ export async function getTrackingInfo(
 
         return response;
     } catch (error) {
-        console.error('NetParcel getTrackingInfo error:', error);
+        logger.error('NetParcel getTrackingInfo error', error instanceof Error ? error : new Error(String(error)));
         throw error;
     }
 }
@@ -168,7 +170,7 @@ export async function getRates(params: {
 
         return response;
     } catch (error) {
-        console.error('NetParcel getRates error:', error);
+        logger.error('NetParcel getRates error', error instanceof Error ? error : new Error(String(error)));
         throw error;
     }
 }
@@ -182,7 +184,7 @@ export async function cancelShipment(trackingNumber: string): Promise<void> {
             method: 'DELETE',
         });
     } catch (error) {
-        console.error('NetParcel cancelShipment error:', error);
+        logger.error('NetParcel cancelShipment error', error instanceof Error ? error : new Error(String(error)));
         throw error;
     }
 }

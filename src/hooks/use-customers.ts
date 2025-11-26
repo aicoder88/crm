@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Customer } from '@/types';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export function useCustomers() {
     const [customers, setCustomers] = useState<Pick<Customer, 'id' | 'store_name'>[]>([]);
@@ -22,7 +23,7 @@ export function useCustomers() {
             if (error) throw error;
             setCustomers(data || []);
         } catch (error) {
-            console.error('Error fetching customers:', error);
+            logger.error('Error fetching customers', error instanceof Error ? error : new Error(String(error)));
             toast.error('Failed to load customers');
         } finally {
             setLoading(false);

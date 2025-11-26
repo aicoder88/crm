@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/invoice-utils';
 import { Pencil, Trash2 } from 'lucide-react';
 import { ProductDialog } from './product-dialog';
+import { logger } from '@/lib/logger';
 
 export function ProductList() {
     const { products, loading, deleteProduct, refresh } = useProducts();
@@ -23,7 +24,7 @@ export function ProductList() {
         try {
             await deleteProduct(id);
         } catch (error) {
-            console.error('Error deleting product:', error);
+            logger.error('Error deleting product', error instanceof Error ? error : new Error(String(error)), { productId: id });
         }
     };
 

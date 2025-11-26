@@ -2,6 +2,7 @@
 
 import React, { Component, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { logger } from '@/lib/logger';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import * as Sentry from "@sentry/nextjs";
@@ -27,16 +28,8 @@ export class ErrorBoundary extends Component<Props, State> {
     }
 
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-        console.error('ErrorBoundary caught an error:', error, errorInfo);
-
-        // Report to Sentry
-        Sentry.withScope((scope) => {
-            scope.setTag("errorBoundary", true);
-            scope.setContext("errorInfo", {
-                componentStack: errorInfo.componentStack,
-            });
-            Sentry.captureException(error);
-        });
+        logger.error('ErrorBoundary caught an error', error, { componentStack: errorInfo.componentStack });
+        // Error is automatically sent to Sentry via logger
     }
 
     handleReset = () => {

@@ -27,6 +27,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { useActivityLog, ActivityLog, ActivityCategory } from '@/hooks/use-activity-log';
 import Link from 'next/link';
+import { logger } from '@/lib/logger';
 
 interface ActivityFeedProps {
   limit?: number;
@@ -64,7 +65,7 @@ const actionIcons: Record<string, any> = {
 
 const categoryColors: Record<ActivityCategory, string> = {
   auth: 'bg-blue-500/10 text-blue-700 dark:text-blue-300',
-  customer: 'bg-green-500/10 text-green-700 dark:text-green-300', 
+  customer: 'bg-green-500/10 text-green-700 dark:text-green-300',
   deal: 'bg-purple-500/10 text-purple-700 dark:text-purple-300',
   invoice: 'bg-orange-500/10 text-orange-700 dark:text-orange-300',
   product: 'bg-pink-500/10 text-pink-700 dark:text-pink-300',
@@ -104,7 +105,7 @@ export function ActivityFeed({
 
         setActivities(data);
       } catch (error) {
-        console.error('Failed to fetch activities:', error);
+        logger.error('Failed to fetch activities', error instanceof Error ? error : new Error(String(error)));
       } finally {
         setLoading(false);
       }
@@ -197,8 +198,8 @@ export function ActivityFeed({
                       <span className="text-sm font-medium">
                         {activity.action_display}
                       </span>
-                      <Badge 
-                        variant="outline" 
+                      <Badge
+                        variant="outline"
                         className={`text-xs px-1.5 py-0.5 ${categoryColors[activity.category]}`}
                       >
                         {activity.category}
@@ -210,7 +211,7 @@ export function ActivityFeed({
                         <>
                           <strong>{activity.entity_name}</strong>
                           {activity.entity_url && (
-                            <Link 
+                            <Link
                               href={activity.entity_url}
                               className="ml-1 inline-flex items-center gap-1 text-primary hover:underline"
                             >

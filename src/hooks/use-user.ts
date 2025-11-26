@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
+import { logger } from '@/lib/logger';
 
 export function useUser() {
     const [user, setUser] = useState<User | null>(null);
@@ -13,7 +14,7 @@ export function useUser() {
                 const { data: { user } } = await supabase.auth.getUser();
                 setUser(user);
             } catch (error) {
-                console.error('Error fetching user:', error);
+                logger.error('Error fetching user', error instanceof Error ? error : new Error(String(error)));
             } finally {
                 setLoading(false);
             }

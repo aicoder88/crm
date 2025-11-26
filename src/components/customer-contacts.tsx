@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, User, Phone, Mail, Star } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { logger } from '@/lib/logger';
 
 interface CustomerContactsProps {
     customerId: string
@@ -27,7 +28,7 @@ export function CustomerContacts({ customerId }: CustomerContactsProps) {
                 .order("is_primary", { ascending: false })
 
             if (error) {
-                console.error("Error fetching contacts:", error)
+                logger.error("Error fetching contacts", error instanceof Error ? error : new Error(String(error)));
             } else {
                 setContacts(data as CustomerContact[])
             }

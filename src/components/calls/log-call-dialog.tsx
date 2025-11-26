@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select"
 import { Phone } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
+import { logger } from "@/lib/logger"
 
 interface LogCallDialogProps {
     customerId: string
@@ -71,7 +72,7 @@ export function LogCallDialog({ customerId, onCallLogged }: LogCallDialogProps) 
                 }))
             }
         } catch (error) {
-            console.error("Error fetching customer data:", error)
+            logger.error('Error fetching customer data for call dialog', error instanceof Error ? error : new Error(String(error)), { customerId });
         }
     }
 
@@ -102,7 +103,7 @@ export function LogCallDialog({ customerId, onCallLogged }: LogCallDialogProps) 
             })
             onCallLogged?.()
         } catch (error) {
-            console.error(error)
+            logger.error('Failed to log call', error instanceof Error ? error : new Error(String(error)), { customerId });
         }
     }
 

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/client';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export interface CompanySettings {
     id: string;
@@ -40,13 +41,13 @@ export function useCompanySettings() {
                     // No rows found
                     setSettings(null);
                 } else {
-                    console.error('Error fetching company settings:', error);
+                    logger.error('Error fetching company settings', error instanceof Error ? error : new Error(String(error)));
                 }
             } else {
                 setSettings(data);
             }
         } catch (error) {
-            console.error('Error:', error);
+            logger.error('Error in fetchSettings', error instanceof Error ? error : new Error(String(error)));
         } finally {
             setLoading(false);
         }
@@ -78,7 +79,7 @@ export function useCompanySettings() {
                 toast.success('Company settings created');
             }
         } catch (error) {
-            console.error('Error updating settings:', error);
+            logger.error('Error updating settings', error instanceof Error ? error : new Error(String(error)));
             toast.error('Failed to update settings');
             throw error;
         }

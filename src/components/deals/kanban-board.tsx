@@ -14,6 +14,7 @@ import { Deal, DealStage } from '@/types';
 import { KanbanColumn } from './kanban-column';
 import { DealCard } from './deal-card';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 interface KanbanBoardProps {
     stages: DealStage[];
@@ -54,12 +55,12 @@ export function KanbanBoard({ stages, deals, onDealUpdate, onDealClick, onOptimi
 
         if (deal && deal.stage !== newStage) {
             const originalStage = deal.stage;
-            
+
             // Optimistic update - update local state immediately
             if (onOptimisticUpdate) {
                 onOptimisticUpdate(dealId, { stage: newStage });
             }
-            
+
             try {
                 await onDealUpdate(dealId, { stage: newStage });
                 toast.success(`Deal moved to ${newStage}`);
@@ -69,7 +70,7 @@ export function KanbanBoard({ stages, deals, onDealUpdate, onDealClick, onOptimi
                     onOptimisticUpdate(dealId, { stage: originalStage });
                 }
                 toast.error('Failed to update deal. Please try again.');
-                console.error('Failed to update deal:', error);
+                logger.error('Failed to update deal', error instanceof Error ? error : new Error(String(error)));
             }
         }
     };

@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
-import { AlertTriangle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { logger } from '@/lib/logger';
 
 export default function GlobalError({
     error,
@@ -12,7 +13,8 @@ export default function GlobalError({
     reset: () => void;
 }) {
     useEffect(() => {
-        console.error('Global error:', error);
+        logger.error('Global error caught', error instanceof Error ? error : new Error(String(error)));
+        // Error is automatically sent to Sentry via logger
     }, [error]);
 
     return (
@@ -22,7 +24,7 @@ export default function GlobalError({
                     <div className="w-full max-w-md space-y-6 text-center">
                         <div className="flex justify-center">
                             <div className="rounded-full bg-destructive/10 p-6">
-                                <AlertTriangle className="h-16 w-16 text-destructive" />
+                                <AlertCircle className="h-16 w-16 text-destructive" />
                             </div>
                         </div>
 

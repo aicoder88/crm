@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { motion, AnimatePresence } from 'framer-motion';
+import { logger } from '@/lib/logger';
 
 interface InvoiceFormProps {
     onSuccess?: () => void;
@@ -98,7 +99,7 @@ export function InvoiceForm({ onSuccess, onCancel }: InvoiceFormProps) {
             setCustomers(customersResult.data || []);
             setProducts(productsResult.data || []);
         } catch (error) {
-            console.error('Error fetching data:', error);
+            logger.error('Error fetching invoice form data', error instanceof Error ? error : new Error(String(error)));
             toast.error('Failed to load customers and products');
         } finally {
             setLoading(false);
@@ -159,7 +160,7 @@ export function InvoiceForm({ onSuccess, onCancel }: InvoiceFormProps) {
             toast.success('Invoice created successfully');
             onSuccess?.();
         } catch (error) {
-            console.error('Error creating invoice:', error);
+            logger.error('Error creating invoice', error instanceof Error ? error : new Error(String(error)));
             toast.error('Failed to create invoice');
         } finally {
             setSubmitting(false);

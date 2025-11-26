@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { SavedSearch, CustomerFilters } from "@/types"
+import { logger } from '@/lib/logger';
 
 export function useSavedSearches() {
     const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([])
@@ -23,7 +24,7 @@ export function useSavedSearches() {
             setSavedSearches(data || [])
         } catch (err) {
             setError(err as Error)
-            console.error("Error fetching saved searches:", err)
+            logger.error("Error fetching saved searches", err instanceof Error ? err : new Error(String(err)));
         } finally {
             setLoading(false)
         }
@@ -49,8 +50,8 @@ export function useSavedSearches() {
             setSavedSearches((prev) => [data, ...prev])
             return data
         } catch (err) {
-            console.error("Error creating saved search:", err)
-            throw err
+            logger.error("Error creating saved search", err instanceof Error ? err : new Error(String(err)));
+            throw err;
         }
     }
 
@@ -65,8 +66,8 @@ export function useSavedSearches() {
             if (error) throw error
             setSavedSearches((prev) => prev.filter((s) => s.id !== id))
         } catch (err) {
-            console.error("Error deleting saved search:", err)
-            throw err
+            logger.error("Error deleting saved search", err instanceof Error ? err : new Error(String(err)));
+            throw err;
         }
     }
 
@@ -86,8 +87,8 @@ export function useSavedSearches() {
             )
             return data
         } catch (err) {
-            console.error("Error updating saved search:", err)
-            throw err
+            logger.error("Error updating saved search", err instanceof Error ? err : new Error(String(err)));
+            throw err;
         }
     }
 

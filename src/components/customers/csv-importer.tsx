@@ -15,6 +15,7 @@ import { createClient } from "@/lib/supabase/client"
 import { Loader2, Upload, CheckCircle, AlertCircle } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { logger } from "@/lib/logger"
 
 // Define the shape of the CSV row based on the file inspection
 interface CSVRow {
@@ -188,7 +189,7 @@ export function CsvImporter() {
                 .select("id");
 
             if (error) {
-                console.error("Batch upload error:", error)
+                logger.error('CSV batch upload error', error instanceof Error ? error : new Error(String(error)), { batchSize: batch.length });
                 errorCount += batch.length
             } else {
                 successCount += batch.length
@@ -256,7 +257,7 @@ export function CsvImporter() {
                         .insert(socialMediaInserts);
 
                     if (socialError) {
-                        console.error("Error inserting social media links:", socialError);
+                        logger.error('Error inserting social media links', socialError instanceof Error ? socialError : new Error(String(socialError)));
                         // We don't count this as a main failure, but log it
                     }
                 }
@@ -267,7 +268,7 @@ export function CsvImporter() {
                         .insert(contactInserts);
 
                     if (contactError) {
-                        console.error("Error inserting customer contacts:", contactError);
+                        logger.error('Error inserting customer contacts', contactError instanceof Error ? contactError : new Error(String(contactError)));
                     }
                 }
             }

@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useDebounce } from './use-debounce';
+import { logger } from '@/lib/logger';
 
 export interface SearchResult {
   entity_type: 'customer' | 'deal' | 'product' | 'invoice';
@@ -56,7 +57,7 @@ export function useGlobalSearch() {
         error: null
       });
     } catch (err) {
-      console.error('Search error:', err);
+      logger.error('Search error', err instanceof Error ? err : new Error(String(err)));
       setSearchState({
         results: [],
         loading: false,
@@ -74,7 +75,7 @@ export function useGlobalSearch() {
     const { data, error } = await supabase.rpc('search_customers', {
       query_text: searchQuery.trim()
     });
-    
+
     if (error) throw error;
     return data || [];
   }, [supabase]);
@@ -83,7 +84,7 @@ export function useGlobalSearch() {
     const { data, error } = await supabase.rpc('search_deals', {
       query_text: searchQuery.trim()
     });
-    
+
     if (error) throw error;
     return data || [];
   }, [supabase]);
@@ -92,7 +93,7 @@ export function useGlobalSearch() {
     const { data, error } = await supabase.rpc('search_products', {
       query_text: searchQuery.trim()
     });
-    
+
     if (error) throw error;
     return data || [];
   }, [supabase]);

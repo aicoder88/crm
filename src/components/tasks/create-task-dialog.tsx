@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select"
 import { Plus, Bell } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
+import { logger } from "@/lib/logger"
 
 interface CreateTaskDialogProps {
     customerId: string
@@ -85,7 +86,9 @@ export function CreateTaskDialog({ customerId, onTaskCreated }: CreateTaskDialog
             })
             onTaskCreated?.()
         } catch (error) {
-            console.error(error)
+            logger.error('Failed to create task', error instanceof Error ? error : new Error(String(error)), {
+                customerId
+            });
         } finally {
             setLoading(false)
         }

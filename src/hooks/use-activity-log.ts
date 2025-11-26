@@ -2,10 +2,11 @@
 
 import { useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { logger } from '@/lib/logger';
 
-export type ActivityCategory = 
+export type ActivityCategory =
   | 'auth'
-  | 'customer' 
+  | 'customer'
   | 'deal'
   | 'invoice'
   | 'product'
@@ -58,7 +59,7 @@ export function useActivityLog() {
       // Get client info
       const userAgent = navigator.userAgent;
       const sessionId = sessionStorage.getItem('session_id') || crypto.randomUUID();
-      
+
       // Store session ID for future use
       if (!sessionStorage.getItem('session_id')) {
         sessionStorage.setItem('session_id', sessionId);
@@ -82,13 +83,13 @@ export function useActivityLog() {
       });
 
       if (error) {
-        console.error('Failed to log activity:', error);
+        logger.error('Failed to log activity', error instanceof Error ? error : new Error(String(error)));
         return null;
       }
 
       return data;
     } catch (err) {
-      console.error('Activity logging error:', err);
+      logger.error('Activity logging error', err instanceof Error ? err : new Error(String(err)));
       return null;
     }
   }, [supabase]);
@@ -106,7 +107,7 @@ export function useActivityLog() {
 
       return data || [];
     } catch (err) {
-      console.error('Failed to fetch activities:', err);
+      logger.error('Failed to fetch activities', err instanceof Error ? err : new Error(String(err)));
       return [];
     }
   }, [supabase]);
@@ -125,14 +126,14 @@ export function useActivityLog() {
 
       return data || [];
     } catch (err) {
-      console.error('Failed to fetch user activities:', err);
+      logger.error('Failed to fetch user activities', err instanceof Error ? err : new Error(String(err)));
       return [];
     }
   }, [supabase]);
 
   const getEntityActivities = useCallback(async (
-    entityType: string, 
-    entityId: string, 
+    entityType: string,
+    entityId: string,
     limit: number = 20
   ): Promise<ActivityLog[]> => {
     try {
@@ -149,7 +150,7 @@ export function useActivityLog() {
 
       return data || [];
     } catch (err) {
-      console.error('Failed to fetch entity activities:', err);
+      logger.error('Failed to fetch entity activities', err instanceof Error ? err : new Error(String(err)));
       return [];
     }
   }, [supabase]);

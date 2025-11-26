@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useTags } from "@/hooks/useTags"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { logger } from '@/lib/logger';
 import { Label } from "@/components/ui/label"
 import {
     Dialog,
@@ -59,7 +60,7 @@ export function TagManager() {
             setNewTagName("")
             setSelectedColor(PRESET_COLORS[8])
         } catch (error) {
-            console.error("Failed to create tag:", error)
+            logger.error("Failed to create tag", error instanceof Error ? error : new Error(String(error)));
         } finally {
             setIsSubmitting(false)
         }
@@ -72,7 +73,7 @@ export function TagManager() {
             await updateTag(id, { name: editName, color: editColor })
             setEditingTag(null)
         } catch (error) {
-            console.error("Failed to update tag:", error)
+            logger.error("Failed to update tag", error instanceof Error ? error : new Error(String(error)));
         } finally {
             setIsSubmitting(false)
         }
@@ -82,7 +83,7 @@ export function TagManager() {
         try {
             await deleteTag(id)
         } catch (error) {
-            console.error("Failed to delete tag:", error)
+            logger.error("Failed to delete tag", error instanceof Error ? error : new Error(String(error)));
         }
     }
 

@@ -18,6 +18,7 @@ import {
     ExportOptions
 } from '@/lib/export-utils';
 import { useActivityLog } from '@/hooks/use-activity-log';
+import { logger } from '@/lib/logger';
 
 export type ExportFormat = 'csv' | 'json' | 'excel';
 
@@ -56,7 +57,7 @@ export function ExportButton<T extends Record<string, any>>({
         }
 
         setIsExporting(true);
-        
+
         try {
             const options: ExportOptions = { filename };
 
@@ -79,16 +80,20 @@ export function ExportButton<T extends Record<string, any>>({
             }
 
             toast.success(`Exported ${data.length} records as ${format.toUpperCase()}`);
-            
+
             // Log the export activity
             if (entityType) {
                 await logExportAction(entityType, format.toUpperCase(), data.length);
             }
-            
+
             onExport?.(format, data.length);
-            
+
         } catch (error) {
-            console.error('Export error:', error);
+            logger.error('Export error', error instanceof Error ? error : new Error(String(error)), {
+                format,
+                recordCount: data.length,
+                entityType
+            });
             toast.error(error instanceof Error ? error.message : 'Export failed');
         } finally {
             setIsExporting(false);
@@ -99,7 +104,7 @@ export function ExportButton<T extends Record<string, any>>({
     if (formats.length === 1) {
         const format = formats[0];
         const formatConfig = getFormatConfig(format);
-        
+
         return (
             <Button
                 variant={variant}
