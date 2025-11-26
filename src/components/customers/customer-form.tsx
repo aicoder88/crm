@@ -36,7 +36,7 @@ const formSchema = z.object({
     status: z.enum(["Qualified", "Interested", "Not Qualified", "Not Interested", "Dog Store"]),
     email: z.string().email().optional().or(z.literal("")),
     phone: z.string()
-        .regex(/^(\+1)?[\s.-]?\(?[0-9]{3}\)?[\s.-]?[0-9]{3}[\s.-]?[0-9]{4}$/, 
+        .regex(/^(\+1)?[\s.-]?\(?[0-9]{3}\)?[\s.-]?[0-9]{3}[\s.-]?[0-9]{4}$/,
             'Please enter a valid phone number (e.g., (416) 555-0123)')
         .optional()
         .or(z.literal("")),
@@ -47,7 +47,7 @@ const formSchema = z.object({
         .optional()
         .or(z.literal("")),
     postal_code: z.string()
-        .regex(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/, 
+        .regex(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/,
             'Please enter a valid Canadian postal code (e.g., K1A 0A6)')
         .optional()
         .or(z.literal("")),
@@ -92,7 +92,7 @@ export function CustomerForm({ customerId, initialData }: CustomerFormProps) {
                 website: initialData.website || "",
                 street: initialData.street || "",
                 city: initialData.city || "",
-                province: initialData.province || "",
+                province: (initialData.province as any) || "",
                 postal_code: initialData.postal_code || "",
                 notes: initialData.notes || "",
             })

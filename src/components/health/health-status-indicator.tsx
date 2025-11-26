@@ -28,10 +28,10 @@ interface HealthStatusIndicatorProps {
   compact?: boolean;
 }
 
-export function HealthStatusIndicator({ 
-  autoRefresh = true, 
+export function HealthStatusIndicator({
+  autoRefresh = true,
   refreshInterval = 60000, // 1 minute
-  compact = true 
+  compact = true
 }: HealthStatusIndicatorProps) {
   const [health, setHealth] = useState<HealthStatus | null>(null);
   const [loading, setLoading] = useState(false);
@@ -41,11 +41,11 @@ export function HealthStatusIndicator({
     try {
       setLoading(true);
       const response = await fetch('/api/health');
-      
+
       if (!response.ok) {
         throw new Error(`Health check failed: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setHealth(data);
       setError(null);
@@ -58,11 +58,12 @@ export function HealthStatusIndicator({
 
   useEffect(() => {
     fetchHealth();
-    
+
     if (autoRefresh) {
       const interval = setInterval(fetchHealth, refreshInterval);
       return () => clearInterval(interval);
     }
+    return undefined;
   }, [autoRefresh, refreshInterval]);
 
   const getStatusConfig = (status?: string) => {
@@ -106,7 +107,7 @@ export function HealthStatusIndicator({
     const minutes = Math.floor(uptime / (1000 * 60));
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
-    
+
     if (days > 0) return `${days}d ${hours % 24}h`;
     if (hours > 0) return `${hours}h ${minutes % 60}m`;
     return `${minutes}m`;
@@ -133,7 +134,7 @@ export function HealthStatusIndicator({
         <Tooltip>
           <TooltipTrigger asChild>
             {compact ? (
-              <Badge 
+              <Badge
                 variant={config.variant}
                 className={`${config.bgColor} ${config.color} cursor-pointer`}
                 onClick={fetchHealth}
@@ -170,7 +171,7 @@ export function HealthStatusIndicator({
       <Tooltip>
         <TooltipTrigger asChild>
           {compact ? (
-            <Badge 
+            <Badge
               variant={config.variant}
               className={`${config.bgColor} ${config.color} cursor-pointer`}
               onClick={fetchHealth}
@@ -191,14 +192,14 @@ export function HealthStatusIndicator({
               <config.icon className={`h-4 w-4 ${config.color}`} />
               <span className="font-medium">System {config.label}</span>
             </div>
-            
+
             <div className="space-y-1 text-xs">
               <div>Uptime: {formatUptime(health.uptime)}</div>
               <div>Database: {health.checks.database.responseTime}ms</div>
               <div>Memory: {health.checks.memory.status}</div>
               <div>Environment: {health.checks.environment.status}</div>
             </div>
-            
+
             <div className="text-xs text-muted-foreground border-t pt-2">
               Last updated: {new Date(health.timestamp).toLocaleTimeString()}
               <br />

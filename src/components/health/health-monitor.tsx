@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  Shield, 
-  Database, 
-  Server, 
-  Globe, 
+import {
+  Shield,
+  Database,
+  Server,
+  Globe,
   Activity,
   AlertTriangle,
   CheckCircle,
@@ -73,10 +73,10 @@ interface HealthMonitorProps {
   refreshInterval?: number;
 }
 
-export function HealthMonitor({ 
-  detailed = false, 
-  autoRefresh = true, 
-  refreshInterval = 30000 
+export function HealthMonitor({
+  detailed = false,
+  autoRefresh = true,
+  refreshInterval = 30000
 }: HealthMonitorProps) {
   const [health, setHealth] = useState<HealthStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -87,11 +87,11 @@ export function HealthMonitor({
     try {
       setLoading(true);
       const response = await fetch(detailed ? '/api/health/detailed' : '/api/health');
-      
+
       if (!response.ok) {
         throw new Error(`Health check failed: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setHealth(data);
       setError(null);
@@ -105,11 +105,12 @@ export function HealthMonitor({
 
   useEffect(() => {
     fetchHealth();
-    
+
     if (autoRefresh) {
       const interval = setInterval(fetchHealth, refreshInterval);
       return () => clearInterval(interval);
     }
+    return undefined;
   }, [detailed, autoRefresh, refreshInterval]);
 
   const getStatusIcon = (status: string) => {
@@ -143,7 +144,7 @@ export function HealthMonitor({
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
-    
+
     if (days > 0) {
       return `${days}d ${hours % 24}h ${minutes % 60}m`;
     } else if (hours > 0) {
@@ -208,7 +209,7 @@ export function HealthMonitor({
     return null;
   }
 
-  const memoryUsagePercent = health.checks.memory.heapTotal > 0 
+  const memoryUsagePercent = health.checks.memory.heapTotal > 0
     ? Math.round((health.checks.memory.heapUsed / health.checks.memory.heapTotal) * 100)
     : 0;
 
@@ -218,8 +219,8 @@ export function HealthMonitor({
         <CardTitle className="flex items-center gap-2">
           <Shield className="h-5 w-5" />
           System Health
-          <Badge 
-            variant="outline" 
+          <Badge
+            variant="outline"
             className={`ml-auto ${getStatusColor(health.status)}`}
           >
             {getStatusIcon(health.status)}
@@ -278,8 +279,8 @@ export function HealthMonitor({
                 </div>
               </div>
             </div>
-            <Badge 
-              variant="outline" 
+            <Badge
+              variant="outline"
               className={getStatusColor(health.checks.database.status)}
             >
               {getStatusIcon(health.checks.database.status)}
@@ -299,15 +300,15 @@ export function HealthMonitor({
                   )}
                 </div>
                 {health.checks.memory.heapTotal > 0 && (
-                  <Progress 
-                    value={memoryUsagePercent} 
+                  <Progress
+                    value={memoryUsagePercent}
                     className="h-2"
                   />
                 )}
               </div>
             </div>
-            <Badge 
-              variant="outline" 
+            <Badge
+              variant="outline"
               className={getStatusColor(health.checks.memory.status)}
             >
               {getStatusIcon(health.checks.memory.status)}
@@ -333,8 +334,8 @@ export function HealthMonitor({
                 )}
               </div>
             </div>
-            <Badge 
-              variant="outline" 
+            <Badge
+              variant="outline"
               className={getStatusColor(health.checks.environment.status)}
             >
               {getStatusIcon(health.checks.environment.status)}
@@ -349,7 +350,7 @@ export function HealthMonitor({
                 <div>
                   <div className="font-medium">External Services</div>
                   <div className="text-xs text-muted-foreground">
-                    Supabase: {health.checks.external.services.supabase.responseTime 
+                    Supabase: {health.checks.external.services.supabase.responseTime
                       ? `${health.checks.external.services.supabase.responseTime}ms`
                       : 'N/A'
                     }
@@ -361,8 +362,8 @@ export function HealthMonitor({
                   )}
                 </div>
               </div>
-              <Badge 
-                variant="outline" 
+              <Badge
+                variant="outline"
                 className={getStatusColor(health.checks.external.status)}
               >
                 {getStatusIcon(health.checks.external.status)}
@@ -377,9 +378,9 @@ export function HealthMonitor({
             <Clock className="h-3 w-3" />
             Last updated: {lastRefresh.toLocaleTimeString()}
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={fetchHealth}
             disabled={loading}
           >

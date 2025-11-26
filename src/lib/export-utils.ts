@@ -36,8 +36,8 @@ export function exportToCSV<T extends Record<string, any>>(
     // Generate CSV rows
     const rows = data.map(row => {
         return columns.map(col => {
-            let value = row[col.key];
-            
+            let value: any = row[col.key];
+
             // Apply formatter if provided
             if (col.formatter) {
                 value = col.formatter(value);
@@ -45,7 +45,7 @@ export function exportToCSV<T extends Record<string, any>>(
                 // Default formatting
                 value = formatCellValue(value, dateFormat);
             }
-            
+
             // Escape quotes and wrap in quotes
             return `"${String(value).replace(/"/g, '""')}"`;
         }).join(',');
@@ -55,7 +55,7 @@ export function exportToCSV<T extends Record<string, any>>(
     const csvContent = [headers, ...rows].join('\n');
 
     // Create and download file
-    const finalFilename = includeTimestamp 
+    const finalFilename = includeTimestamp
         ? `${filename}_${new Date().toISOString().split('T')[0]}.csv`
         : `${filename}.csv`;
 
@@ -115,7 +115,7 @@ function formatCellValue(value: any, dateFormat: 'iso' | 'local' | 'short'): str
     // Handle dates
     if (value instanceof Date || (typeof value === 'string' && !isNaN(Date.parse(value)))) {
         const date = value instanceof Date ? value : new Date(value);
-        
+
         switch (dateFormat) {
             case 'iso':
                 return date.toISOString();
@@ -147,16 +147,16 @@ function formatCellValue(value: any, dateFormat: 'iso' | 'local' | 'short'): str
 function downloadFile(content: string, filename: string, mimeType: string): void {
     const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement('a');
     link.href = url;
     link.download = filename;
     link.style.display = 'none';
-    
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     // Clean up the URL object
     URL.revokeObjectURL(url);
 }
@@ -229,14 +229,14 @@ export const productExportColumns: ExportColumn<any>[] = [
 ];
 
 // Convenience functions for specific entity exports
-export const exportCustomers = (data: any[], options?: ExportOptions) => 
+export const exportCustomers = (data: any[], options?: ExportOptions) =>
     exportToCSV(data, customerExportColumns, { filename: 'customers', ...options });
 
-export const exportDeals = (data: any[], options?: ExportOptions) => 
+export const exportDeals = (data: any[], options?: ExportOptions) =>
     exportToCSV(data, dealExportColumns, { filename: 'deals', ...options });
 
-export const exportInvoices = (data: any[], options?: ExportOptions) => 
+export const exportInvoices = (data: any[], options?: ExportOptions) =>
     exportToCSV(data, invoiceExportColumns, { filename: 'invoices', ...options });
 
-export const exportProducts = (data: any[], options?: ExportOptions) => 
+export const exportProducts = (data: any[], options?: ExportOptions) =>
     exportToCSV(data, productExportColumns, { filename: 'products', ...options });

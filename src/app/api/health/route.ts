@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 interface HealthStatus {
   status: 'healthy' | 'degraded' | 'unhealthy';
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
     // Database health check
     const dbStart = Date.now();
     const supabase = await createClient();
-    
+
     const { data, error } = await supabase
       .from('customers')
       .select('count')
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
       .single();
 
     const dbResponseTime = Date.now() - dbStart;
-    
+
     if (error) {
       healthCheck.checks.database = {
         status: 'unhealthy',
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
         status: 'healthy',
         responseTime: dbResponseTime
       };
-      
+
       // Slow database response indicates degraded performance
       if (dbResponseTime > 1000) {
         healthCheck.checks.database.status = 'unhealthy';
@@ -91,13 +91,13 @@ export async function GET(request: NextRequest) {
         const memUsage = process.memoryUsage();
         const usedMB = Math.round(memUsage.heapUsed / 1024 / 1024);
         const limitMB = Math.round(memUsage.heapTotal / 1024 / 1024);
-        
+
         healthCheck.checks.memory = {
           status: usedMB > limitMB * 0.9 ? 'unhealthy' : usedMB > limitMB * 0.7 ? 'degraded' : 'healthy',
           usage: usedMB,
           limit: limitMB
         };
-        
+
         if (healthCheck.checks.memory.status === 'unhealthy') {
           healthCheck.status = 'unhealthy';
         } else if (healthCheck.checks.memory.status === 'degraded' && healthCheck.status !== 'unhealthy') {
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
     ];
 
     const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
-    
+
     if (missingEnvVars.length > 0) {
       healthCheck.status = 'unhealthy';
       healthCheck.checks.environment = {
@@ -131,10 +131,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Set appropriate HTTP status code based on health
-    const httpStatus = healthCheck.status === 'healthy' ? 200 : 
-                      healthCheck.status === 'degraded' ? 207 : 503;
+    const httpStatus = healthCheck.status === 'healthy' ? 200 :
+      healthCheck.status === 'degraded' ? 207 : 503;
 
-    return NextResponse.json(healthCheck, { 
+    return NextResponse.json(healthCheck, {
       status: httpStatus,
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -167,7 +167,7 @@ export async function GET(request: NextRequest) {
       }
     };
 
-    return NextResponse.json(errorHealth, { 
+    return NextResponse.json(errorHealth, {
       status: 503,
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
