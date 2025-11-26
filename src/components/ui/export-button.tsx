@@ -33,6 +33,7 @@ interface ExportButtonProps<T> {
     showText?: boolean;
     entityType?: string;
     onExport?: (format: ExportFormat, count: number) => void;
+    className?: string;
 }
 
 export function ExportButton<T extends Record<string, any>>({
@@ -46,6 +47,7 @@ export function ExportButton<T extends Record<string, any>>({
     showText = true,
     entityType,
     onExport,
+    className,
 }: ExportButtonProps<T>) {
     const [isExporting, setIsExporting] = useState(false);
     const { logExportAction } = useActivityLog();
@@ -111,7 +113,7 @@ export function ExportButton<T extends Record<string, any>>({
                 size={size}
                 disabled={disabled || isExporting || data.length === 0}
                 onClick={() => handleExport(format)}
-                className="gap-2"
+                className={className || "gap-2"}
             >
                 <formatConfig.icon className="h-4 w-4" />
                 {showText && (isExporting ? 'Exporting...' : `Export ${formatConfig.label}`)}
@@ -127,7 +129,7 @@ export function ExportButton<T extends Record<string, any>>({
                     variant={variant}
                     size={size}
                     disabled={disabled || isExporting || data.length === 0}
-                    className="gap-2"
+                    className={className || "gap-2"}
                 >
                     <Download className="h-4 w-4" />
                     {showText && (isExporting ? 'Exporting...' : 'Export')}
