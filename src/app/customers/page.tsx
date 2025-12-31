@@ -55,9 +55,9 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
         return <div className="text-red-500">Error loading customers: {error.message}</div>
     }
 
-    const transformedCustomers = customers?.map((c: any) => ({
+    const transformedCustomers = customers?.map((c: Record<string, unknown> & { customer_tags?: Array<{ tags: unknown }>; customer_contacts?: unknown[]; customer_social_media?: unknown[] }) => ({
         ...c,
-        tags: c.customer_tags?.map((ct: any) => ct.tags) || [],
+        tags: c.customer_tags?.map((ct) => ct.tags) || [],
         contacts: c.customer_contacts || [],
         social_media: c.customer_social_media || []
     })) || []

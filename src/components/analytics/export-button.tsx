@@ -11,7 +11,7 @@ import { Download, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface ExportButtonProps {
-    data: any[];
+    data: Record<string, unknown>[];
     filename: string;
     disabled?: boolean;
 }

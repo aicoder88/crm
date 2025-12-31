@@ -3,7 +3,7 @@
 export interface ExportColumn<T> {
     key: keyof T;
     header: string;
-    formatter?: (value: any) => string;
+    formatter?: (value: T[keyof T]) => string;
 }
 
 export interface ExportOptions {
@@ -15,7 +15,7 @@ export interface ExportOptions {
 /**
  * Export data to CSV format
  */
-export function exportToCSV<T extends Record<string, any>>(
+export function exportToCSV<T extends Record<string, unknown>>(
     data: T[],
     columns: ExportColumn<T>[],
     options: ExportOptions = {}
@@ -36,7 +36,7 @@ export function exportToCSV<T extends Record<string, any>>(
     // Generate CSV rows
     const rows = data.map(row => {
         return columns.map(col => {
-            let value: any = row[col.key];
+            let value: unknown = row[col.key];
 
             // Apply formatter if provided
             if (col.formatter) {
@@ -90,7 +90,7 @@ export function exportToJSON<T>(
 /**
  * Export data to Excel format (XLSX)
  */
-export function exportToExcel<T extends Record<string, any>>(
+export function exportToExcel<T extends Record<string, unknown>>(
     data: T[],
     columns: ExportColumn<T>[],
     options: ExportOptions = {}
@@ -107,7 +107,7 @@ export function exportToExcel<T extends Record<string, any>>(
 /**
  * Format cell value based on its type
  */
-function formatCellValue(value: any, dateFormat: 'iso' | 'local' | 'short'): string {
+function formatCellValue(value: unknown, dateFormat: 'iso' | 'local' | 'short'): string {
     if (value === null || value === undefined) {
         return '';
     }
@@ -163,7 +163,7 @@ function downloadFile(content: string, filename: string, mimeType: string): void
 
 // Predefined column configurations for common entities
 
-export const customerExportColumns: ExportColumn<any>[] = [
+export const customerExportColumns: ExportColumn<Record<string, unknown>>[] = [
     { key: 'store_name', header: 'Store Name' },
     { key: 'email', header: 'Email' },
     { key: 'phone', header: 'Phone' },
@@ -179,7 +179,7 @@ export const customerExportColumns: ExportColumn<any>[] = [
     }
 ];
 
-export const dealExportColumns: ExportColumn<any>[] = [
+export const dealExportColumns: ExportColumn<Record<string, unknown>>[] = [
     { key: 'title', header: 'Deal Title' },
     { key: 'customer', header: 'Customer', formatter: (customer) => customer?.store_name || '' },
     { key: 'value', header: 'Value', formatter: (value) => `$${Number(value).toFixed(2)}` },
@@ -197,7 +197,7 @@ export const dealExportColumns: ExportColumn<any>[] = [
     }
 ];
 
-export const invoiceExportColumns: ExportColumn<any>[] = [
+export const invoiceExportColumns: ExportColumn<Record<string, unknown>>[] = [
     { key: 'invoice_number', header: 'Invoice Number' },
     { key: 'customer', header: 'Customer', formatter: (customer) => customer?.store_name || '' },
     { key: 'total', header: 'Total', formatter: (total) => `$${Number(total).toFixed(2)}` },
@@ -214,7 +214,7 @@ export const invoiceExportColumns: ExportColumn<any>[] = [
     }
 ];
 
-export const productExportColumns: ExportColumn<any>[] = [
+export const productExportColumns: ExportColumn<Record<string, unknown>>[] = [
     { key: 'sku', header: 'SKU' },
     { key: 'name', header: 'Product Name' },
     { key: 'description', header: 'Description' },
@@ -229,14 +229,14 @@ export const productExportColumns: ExportColumn<any>[] = [
 ];
 
 // Convenience functions for specific entity exports
-export const exportCustomers = (data: any[], options?: ExportOptions) =>
+export const exportCustomers = (data: Record<string, unknown>[], options?: ExportOptions) =>
     exportToCSV(data, customerExportColumns, { filename: 'customers', ...options });
 
-export const exportDeals = (data: any[], options?: ExportOptions) =>
+export const exportDeals = (data: Record<string, unknown>[], options?: ExportOptions) =>
     exportToCSV(data, dealExportColumns, { filename: 'deals', ...options });
 
-export const exportInvoices = (data: any[], options?: ExportOptions) =>
+export const exportInvoices = (data: Record<string, unknown>[], options?: ExportOptions) =>
     exportToCSV(data, invoiceExportColumns, { filename: 'invoices', ...options });
 
-export const exportProducts = (data: any[], options?: ExportOptions) =>
+export const exportProducts = (data: Record<string, unknown>[], options?: ExportOptions) =>
     exportToCSV(data, productExportColumns, { filename: 'products', ...options });

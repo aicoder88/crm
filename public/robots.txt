@@ -1,0 +1,7 @@
+# Purrify CRM - Internal B2B Application
+# Disallow all crawlers (private application)
+
+User-agent: *
+Disallow: /
+
+# Sitemap (none - internal app)

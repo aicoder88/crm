@@ -16,7 +16,7 @@ import { Upload, CheckCircle, AlertCircle, FileText } from "lucide-react"
 export default function ImportPage() {
     const supabase = createClient()
     const [file, setFile] = useState<File | null>(null)
-    const [preview, setPreview] = useState<any[]>([])
+    const [preview, setPreview] = useState<Record<string, string>[]>([])
     const [uploading, setUploading] = useState(false)
     const [progress, setProgress] = useState(0)
     const [result, setResult] = useState<{ success: number; errors: number } | null>(null)
@@ -66,7 +66,7 @@ export default function ImportPage() {
 
                     // Map CSV fields to database columns
                     // Based on actual CSV structure: name, phone, owner/manager's name, notes, status, email, province, city, address, postal code, website
-                    const formattedBatch = batch.map((row: any) => ({
+                    const formattedBatch = batch.map((row: Record<string, string>) => ({
                         store_name: row['name'] || row['Store Name'] || row['store_name'] || 'Unknown Store',
                         email: row['email'] || row['Email'] || null,
                         phone: row['phone'] || row['Phone'] || null,
@@ -185,7 +185,7 @@ export default function ImportPage() {
                                     <TableBody>
                                         {preview.map((row, i) => (
                                             <TableRow key={i}>
-                                                {Object.values(row).slice(0, 4).map((cell: any, j) => (
+                                                {Object.values(row).slice(0, 4).map((cell, j) => (
                                                     <TableCell key={j}>{cell}</TableCell>
                                                 ))}
                                             </TableRow>

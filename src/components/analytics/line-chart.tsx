@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 interface LineChartProps {
     title?: string;
     description?: string;
-    data: any[];
+    data: Record<string, unknown>[];
     xKey: string;
     lines: Array<{
         dataKey: string;

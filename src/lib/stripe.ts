@@ -10,7 +10,7 @@ if (!env.stripe.secretKey) {
 }
 
 export const stripe = env.stripe.secretKey ? new Stripe(env.stripe.secretKey, {
-    apiVersion: '2025-11-17.clover' as any,
+    apiVersion: '2025-11-17.clover' as Stripe.LatestApiVersion,
     typescript: true,
 }) : null; // Provide a fallback for type safety if Stripe is not configured
 

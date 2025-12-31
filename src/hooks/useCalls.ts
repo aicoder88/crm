@@ -24,7 +24,7 @@ export function useCalls(customerId: string) {
         try {
             // 1. Update customer email and owner name if provided
             if (callData.email !== undefined || callData.owner_manager_name !== undefined) {
-                const updates: any = {}
+                const updates: Record<string, string | undefined> = {}
                 if (callData.email !== undefined) updates.email = callData.email
                 if (callData.owner_manager_name !== undefined) updates.owner_manager_name = callData.owner_manager_name
 
@@ -94,8 +94,8 @@ export function useCalls(customerId: string) {
             }
 
             return call
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Unknown error')
             throw err
         } finally {
             setLoading(false)

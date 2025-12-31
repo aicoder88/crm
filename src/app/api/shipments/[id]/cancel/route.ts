@@ -46,7 +46,7 @@ export async function POST(
         if (shipment.tracking_number) {
             try {
                 await cancelNetParcelShipment(shipment.tracking_number);
-            } catch (error: any) {
+            } catch (error: unknown) {
                 console.error('NetParcel cancellation error:', error);
                 // Continue with local cancellation even if NetParcel fails
             }
@@ -73,10 +73,11 @@ export async function POST(
             success: true,
             message: 'Shipment cancelled successfully',
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error cancelling shipment:', error);
+        const message = error instanceof Error ? error.message : 'Failed to cancel shipment';
         return NextResponse.json(
-            { error: error.message || 'Failed to cancel shipment' },
+            { error: message },
             { status: 500 }
         );
     }

@@ -86,13 +86,13 @@ export function CustomerForm({ customerId, initialData }: CustomerFormProps) {
         if (initialData) {
             form.reset({
                 store_name: initialData.store_name || "",
-                status: initialData.status as any,
+                status: initialData.status,
                 email: initialData.email || "",
                 phone: initialData.phone || "",
                 website: initialData.website || "",
                 street: initialData.street || "",
                 city: initialData.city || "",
-                province: (initialData.province as any) || "",
+                province: (initialData.province as "" | "AB" | "BC" | "MB" | "NB" | "NL" | "NS" | "NT" | "NU" | "ON" | "PE" | "QC" | "SK" | "YT") || "",
                 postal_code: initialData.postal_code || "",
                 notes: initialData.notes || "",
             })

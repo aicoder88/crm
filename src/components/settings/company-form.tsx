@@ -40,7 +40,7 @@ export function CompanyForm() {
     const { settings, updateSettings, loading } = useCompanySettings();
 
     const form = useForm<CompanyFormValues>({
-        resolver: zodResolver(companyFormSchema) as any,
+        resolver: zodResolver(companyFormSchema),
         defaultValues: {
             name: '',
             email: '',

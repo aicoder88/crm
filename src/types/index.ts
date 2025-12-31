@@ -79,7 +79,7 @@ export interface TimelineEvent {
     deal_stage: string | null;
     deal_value: number | null;
     note_category: string | null;
-    data: any;
+    data: Record<string, unknown> | null;
 }
 
 export interface Call {

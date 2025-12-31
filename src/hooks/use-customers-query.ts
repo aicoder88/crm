@@ -93,9 +93,9 @@ export function useCustomers(filters: CustomerFilters = {}) {
       }
 
       // Transform the data to include tags and contacts properly
-      const transformedCustomers = data?.map((c: any) => ({
+      const transformedCustomers = data?.map((c: Record<string, unknown> & { customer_tags?: Array<{ tags: unknown }>; customer_contacts?: unknown[]; customer_social_media?: unknown[] }) => ({
         ...c,
-        tags: c.customer_tags?.map((ct: any) => ct.tags) || [],
+        tags: c.customer_tags?.map((ct) => ct.tags) || [],
         contacts: c.customer_contacts || [],
         social_media: c.customer_social_media || []
       })) || [];
@@ -148,7 +148,7 @@ export function useCustomer(customerId: string | null) {
       // Transform the data
       return {
         ...data,
-        tags: data.customer_tags?.map((ct: any) => ct.tags) || [],
+        tags: data.customer_tags?.map((ct: { tags: unknown }) => ct.tags) || [],
         contacts: data.customer_contacts || [],
         addresses: data.customer_addresses || [],
         social_media: data.customer_social_media || [],
@@ -187,7 +187,7 @@ export function useCustomersStats() {
       }
 
       // Count customers by status
-      const statusCounts = (statusResult.data || []).reduce((acc: Record<string, number>, customer: any) => {
+      const statusCounts = (statusResult.data || []).reduce((acc: Record<string, number>, customer: { status: string }) => {
         acc[customer.status] = (acc[customer.status] || 0) + 1;
         return acc;
       }, {});

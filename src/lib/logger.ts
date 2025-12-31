@@ -13,7 +13,7 @@ export enum LogLevel {
 }
 
 export interface LogContext {
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 interface LogEntry {
@@ -85,7 +85,7 @@ class Logger {
         }
     }
 
-    private sendToExternalService(logData: any): void {
+    private sendToExternalService(logData: Record<string, unknown>): void {
         // Placeholder for external logging service integration
         // Examples: Sentry, LogRocket, Datadog, CloudWatch, etc.
         // Implementation would go here

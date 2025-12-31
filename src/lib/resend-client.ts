@@ -96,7 +96,7 @@ export async function sendBatchEmails(emails: SendEmailParams[]): Promise<string
             throw new Error('No data returned from Resend batch send');
         }
 
-        return (data as unknown as any[]).map((item: { id: string }) => item.id);
+        return (data as unknown as Array<{ id: string }>).map((item) => item.id);
     } catch (error) {
         logger.error('Failed to send batch emails', error instanceof Error ? error : new Error(String(error)));
         throw error;

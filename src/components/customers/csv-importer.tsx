@@ -195,8 +195,8 @@ export function CsvImporter() {
                 successCount += batch.length
 
                 // Prepare social media, contact, and tag inserts
-                const socialMediaInserts: any[] = [];
-                const contactInserts: any[] = [];
+                const socialMediaInserts: Array<{ customer_id: string; platform: string; url: string }> = [];
+                const contactInserts: Array<{ customer_id: string; name: string; email: string; is_primary: boolean }> = [];
                 // The user asked for tags, but the instruction comments suggest adding to notes instead for simplicity
                 // Let's stick to the notes modification as implemented above in the map function.
                 // If actual tag creation is needed, it would involve checking/creating tags in a separate table

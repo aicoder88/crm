@@ -351,7 +351,7 @@ export function InvoiceForm({ onSuccess, onCancel }: InvoiceFormProps) {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="status">Status</Label>
-                                <Select value={watch('status')} onValueChange={(value: any) => setValue('status', value)}>
+                                <Select value={watch('status')} onValueChange={(value: 'draft' | 'sent') => setValue('status', value)}>
                                     <SelectTrigger className="glass-input">
                                         <SelectValue />
                                     </SelectTrigger>

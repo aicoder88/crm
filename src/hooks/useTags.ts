@@ -22,8 +22,8 @@ export function useTags() {
 
             if (error) throw error
             setTags(data || [])
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Unknown error')
         } finally {
             setLoading(false)
         }
@@ -40,7 +40,7 @@ export function useTags() {
             if (error) throw error
             setTags(prev => [...prev, data].sort((a, b) => a.name.localeCompare(b.name)))
             return data
-        } catch (err: any) {
+        } catch (err: unknown) {
             throw err
         }
     }
@@ -57,7 +57,7 @@ export function useTags() {
             if (error) throw error
             setTags(prev => prev.map(t => t.id === id ? data : t))
             return data
-        } catch (err: any) {
+        } catch (err: unknown) {
             throw err
         }
     }
@@ -71,7 +71,7 @@ export function useTags() {
 
             if (error) throw error
             setTags(prev => prev.filter(t => t.id !== id))
-        } catch (err: any) {
+        } catch (err: unknown) {
             throw err
         }
     }

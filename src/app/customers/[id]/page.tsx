@@ -103,7 +103,7 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-3">
-                                    {customer.customer_social_media.map((social: any) => {
+                                    {customer.customer_social_media.map((social: { id: string; platform: string; url: string }) => {
                                         let Icon = Globe
                                         let platformName = social.platform.charAt(0).toUpperCase() + social.platform.slice(1)
 

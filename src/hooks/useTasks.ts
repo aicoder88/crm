@@ -27,8 +27,8 @@ export function useTasks(customerId: string) {
 
             if (error) throw error
             setTasks(data || [])
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Unknown error')
         } finally {
             setLoading(false)
         }
@@ -45,7 +45,7 @@ export function useTasks(customerId: string) {
             if (error) throw error
             setTasks(prev => [...prev, data].sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime()))
             return data
-        } catch (err: any) {
+        } catch (err: unknown) {
             throw err
         }
     }
@@ -69,7 +69,7 @@ export function useTasks(customerId: string) {
             if (error) throw error
             setTasks(prev => prev.map(t => t.id === id ? data : t))
             return data
-        } catch (err: any) {
+        } catch (err: unknown) {
             throw err
         }
     }
@@ -83,7 +83,7 @@ export function useTasks(customerId: string) {
 
             if (error) throw error
             setTasks(prev => prev.filter(t => t.id !== id))
-        } catch (err: any) {
+        } catch (err: unknown) {
             throw err
         }
     }

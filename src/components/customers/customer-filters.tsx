@@ -76,7 +76,7 @@ export function CustomerFiltersComponent({
         onFiltersChange({})
     }
 
-    const updateFilter = (key: keyof CustomerFilters, value: any) => {
+    const updateFilter = (key: keyof CustomerFilters, value: CustomerFilters[keyof CustomerFilters]) => {
         onFiltersChange({ ...filters, [key]: value })
     }
 
@@ -288,7 +288,7 @@ export function CustomerFiltersComponent({
                                 <MultiSelect
                                     options={filterOptions.socialMedia}
                                     selected={filters.socialMedia || []}
-                                    onChange={(value) => updateFilter("socialMedia", value as any)}
+                                    onChange={(value) => updateFilter("socialMedia", value as Array<'facebook' | 'instagram' | 'tiktok' | 'youtube' | 'linkedin'>)}
                                     placeholder="All platforms"
                                 />
                                 <Select

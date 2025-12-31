@@ -42,8 +42,9 @@ export function useShipments(customerId?: string) {
 
             if (fetchError) throw fetchError;
             setShipments(data || []);
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Unknown error';
+            setError(message);
             logger.error('Error fetching shipments', err instanceof Error ? err : new Error(String(err)));
         } finally {
             setLoading(false);
@@ -66,7 +67,7 @@ export function useShipments(customerId?: string) {
 
             setShipments([data, ...shipments]);
             return data;
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error('Error creating shipment', err instanceof Error ? err : new Error(String(err)));
             throw err;
         }
@@ -89,7 +90,7 @@ export function useShipments(customerId?: string) {
 
             setShipments(shipments.map(s => s.id === id ? data : s));
             return data;
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error('Error updating shipment', err instanceof Error ? err : new Error(String(err)));
             throw err;
         }
@@ -105,7 +106,7 @@ export function useShipments(customerId?: string) {
             if (deleteError) throw deleteError;
 
             setShipments(shipments.filter(s => s.id !== id));
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error('Error deleting shipment', err instanceof Error ? err : new Error(String(err)));
             throw err;
         }
@@ -154,8 +155,9 @@ export function useShipment(shipmentId: string | null) {
 
             if (fetchError) throw fetchError;
             setShipment(data);
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Unknown error';
+            setError(message);
             logger.error('Error fetching shipment', err instanceof Error ? err : new Error(String(err)));
         } finally {
             setLoading(false);
@@ -174,7 +176,7 @@ export function useShipment(shipmentId: string | null) {
 
             if (fetchError) throw fetchError;
             setEvents(data || []);
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error('Error fetching shipment events', err instanceof Error ? err : new Error(String(err)));
         }
     }
@@ -206,7 +208,7 @@ export function useShipment(shipmentId: string | null) {
 
             await fetchShipment();
             await fetchShipmentEvents();
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error('Error updating shipment status', err instanceof Error ? err : new Error(String(err)));
             throw err;
         }
@@ -234,7 +236,7 @@ export function useShipment(shipmentId: string | null) {
             await fetchShipmentEvents();
 
             return data;
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error('Error refreshing tracking', err instanceof Error ? err : new Error(String(err)));
             throw err;
         }
@@ -255,7 +257,7 @@ export function useShipment(shipmentId: string | null) {
             }
 
             await fetchShipment();
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error('Error cancelling shipment', err instanceof Error ? err : new Error(String(err)));
             throw err;
         }

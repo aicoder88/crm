@@ -34,8 +34,8 @@ export default function LoginPage() {
 
             router.push("/dashboard")
             router.refresh()
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Login failed')
         } finally {
             setLoading(false)
         }
@@ -54,8 +54,8 @@ export default function LoginPage() {
             if (error) throw error
 
             setError("Check your email for the confirmation link!")
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Sign up failed')
         } finally {
             setLoading(false)
         }

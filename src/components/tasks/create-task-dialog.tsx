@@ -66,8 +66,8 @@ export function CreateTaskDialog({ customerId, onTaskCreated }: CreateTaskDialog
 
             await createTask({
                 title: formData.title,
-                type: formData.type as any,
-                priority: formData.priority as any,
+                type: formData.type as 'call' | 'email' | 'follow_up' | 'other',
+                priority: formData.priority as 'low' | 'medium' | 'high',
                 due_date: new Date(formData.due_date).toISOString(),
                 status: 'pending',
                 notes: null,

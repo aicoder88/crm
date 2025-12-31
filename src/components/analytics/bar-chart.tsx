@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 interface BarChartProps {
     title?: string;
     description?: string;
-    data: any[];
+    data: Record<string, unknown>[];
     xKey: string;
     bars: Array<{
         dataKey: string;

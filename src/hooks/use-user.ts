@@ -31,7 +31,7 @@ export function useUser() {
         };
     }, []);
 
-    const updateProfile = async (attributes: { data?: any; email?: string; password?: string }) => {
+    const updateProfile = async (attributes: { data?: Record<string, unknown>; email?: string; password?: string }) => {
         const { data, error } = await supabase.auth.updateUser(attributes);
         if (error) throw error;
         if (data.user) setUser(data.user);

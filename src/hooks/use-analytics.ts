@@ -366,7 +366,7 @@ export function useFinancialAnalytics() {
             // Revenue by product
             const productRevenue = new Map<string, { revenue: number; count: number }>();
             invoices?.forEach(invoice => {
-                invoice.items?.forEach((item: any) => {
+                invoice.items?.forEach((item: { product_sku?: string; total: number; quantity: number }) => {
                     const sku = item.product_sku || 'N/A';
                     const current = productRevenue.get(sku) || { revenue: 0, count: 0 };
                     productRevenue.set(sku, {
@@ -383,7 +383,7 @@ export function useFinancialAnalytics() {
             // Tax by province
             const taxByProvince = new Map<string, number>();
             invoices?.forEach(invoice => {
-                const province = (invoice.customer as any)?.province || 'Unknown';
+                const province = (invoice.customer as { province?: string } | null)?.province || 'Unknown';
                 taxByProvince.set(province, (taxByProvince.get(province) || 0) + invoice.tax);
             });
 
@@ -465,7 +465,7 @@ export function useOperationalAnalytics() {
             // Shipping cost by province
             const costByProvince = new Map<string, number>();
             shipments?.forEach(shipment => {
-                const province = (shipment.customer as any)?.province || 'Unknown';
+                const province = (shipment.customer as { province?: string } | null)?.province || 'Unknown';
                 if (shipment.shipping_cost) {
                     costByProvince.set(province, (costByProvince.get(province) || 0) + shipment.shipping_cost);
                 }

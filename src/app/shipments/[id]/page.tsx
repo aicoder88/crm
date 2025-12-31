@@ -23,8 +23,8 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
             setRefreshing(true);
             await refreshTracking();
             toast.success('Tracking updated successfully');
-        } catch (error: any) {
-            toast.error(error.message || 'Failed to refresh tracking');
+        } catch (error: unknown) {
+            toast.error(error instanceof Error ? error.message : 'Failed to refresh tracking');
         } finally {
             setRefreshing(false);
         }
@@ -39,8 +39,8 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
             await cancelShipment();
             toast.success('Shipment cancelled successfully');
             router.push('/shipments');
-        } catch (error: any) {
-            toast.error(error.message || 'Failed to cancel shipment');
+        } catch (error: unknown) {
+            toast.error(error instanceof Error ? error.message : 'Failed to cancel shipment');
         }
     };
 

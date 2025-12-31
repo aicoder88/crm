@@ -48,7 +48,7 @@ export async function POST(
         const { error: updateError } = await supabase
             .from('shipments')
             .update({
-                status: trackingData.status as any,
+                status: trackingData.status as string,
                 delivered_date: trackingData.delivered_date || null,
             })
             .eq('id', id);
@@ -96,10 +96,11 @@ export async function POST(
             status: trackingData.status,
             eventsAdded: trackingData.events?.length || 0,
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error refreshing tracking:', error);
+        const message = error instanceof Error ? error.message : 'Failed to refresh tracking';
         return NextResponse.json(
-            { error: error.message || 'Failed to refresh tracking' },
+            { error: message },
             { status: 500 }
         );
     }

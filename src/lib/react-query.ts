@@ -30,7 +30,7 @@ export const queryKeys = {
   customers: {
     all: ['customers'] as const,
     lists: () => [...queryKeys.customers.all, 'list'] as const,
-    list: (filters: Record<string, any> = {}) =>
+    list: (filters: Record<string, unknown> = {}) =>
       [...queryKeys.customers.lists(), filters] as const,
     details: () => [...queryKeys.customers.all, 'detail'] as const,
     detail: (id: string) => [...queryKeys.customers.details(), id] as const,
@@ -41,7 +41,7 @@ export const queryKeys = {
   deals: {
     all: ['deals'] as const,
     lists: () => [...queryKeys.deals.all, 'list'] as const,
-    list: (filters: Record<string, any> = {}) =>
+    list: (filters: Record<string, unknown> = {}) =>
       [...queryKeys.deals.lists(), filters] as const,
     details: () => [...queryKeys.deals.all, 'detail'] as const,
     detail: (id: string) => [...queryKeys.deals.details(), id] as const,
@@ -52,7 +52,7 @@ export const queryKeys = {
   invoices: {
     all: ['invoices'] as const,
     lists: () => [...queryKeys.invoices.all, 'list'] as const,
-    list: (filters: Record<string, any> = {}) =>
+    list: (filters: Record<string, unknown> = {}) =>
       [...queryKeys.invoices.lists(), filters] as const,
     details: () => [...queryKeys.invoices.all, 'detail'] as const,
     detail: (id: string) => [...queryKeys.invoices.details(), id] as const,
@@ -63,7 +63,7 @@ export const queryKeys = {
   products: {
     all: ['products'] as const,
     lists: () => [...queryKeys.products.all, 'list'] as const,
-    list: (filters: Record<string, any> = {}) =>
+    list: (filters: Record<string, unknown> = {}) =>
       [...queryKeys.products.lists(), filters] as const,
     details: () => [...queryKeys.products.all, 'detail'] as const,
     detail: (id: string) => [...queryKeys.products.details(), id] as const,
@@ -115,7 +115,7 @@ export const queryKeys = {
 export const invalidationHelpers = {
   customer: (customerId?: string) => {
     // Invalidate customer lists and specific customer details
-    const keys: any[] = [
+    const keys: readonly unknown[][] = [
       queryKeys.customers.lists(),
       queryKeys.customers.stats(),
       queryKeys.analytics.dashboard(),
@@ -129,7 +129,7 @@ export const invalidationHelpers = {
   },
 
   deal: (dealId?: string, customerId?: string) => {
-    const keys: any[] = [
+    const keys: readonly unknown[][] = [
       queryKeys.deals.lists(),
       queryKeys.analytics.dashboard(),
       queryKeys.analytics.financial(),
@@ -147,7 +147,7 @@ export const invalidationHelpers = {
   },
 
   invoice: (invoiceId?: string, customerId?: string) => {
-    const keys: any[] = [
+    const keys: readonly unknown[][] = [
       queryKeys.invoices.lists(),
       queryKeys.invoices.stats(),
       queryKeys.analytics.dashboard(),
@@ -166,7 +166,7 @@ export const invalidationHelpers = {
   },
 
   product: (productId?: string) => {
-    const keys: any[] = [queryKeys.products.lists()];
+    const keys: readonly unknown[][] = [queryKeys.products.lists()];
 
     if (productId) {
       keys.push(queryKeys.products.detail(productId));

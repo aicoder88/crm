@@ -41,7 +41,7 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
     const supabase = createClient();
 
     const form = useForm<FormValues>({
-        resolver: zodResolver(formSchema) as any,
+        resolver: zodResolver(formSchema),
         defaultValues: {
             sku: product?.sku || '',
             name: product?.name || '',

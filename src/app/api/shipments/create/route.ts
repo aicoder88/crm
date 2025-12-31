@@ -65,10 +65,11 @@ async function handler(request: NextRequest) {
                 serviceLevel: service_level,
                 packageCount: package_count,
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('NetParcel API error:', error);
+            const message = error instanceof Error ? error.message : 'Unknown error';
             return NextResponse.json(
-                { error: `NetParcel error: ${error.message}` },
+                { error: `NetParcel error: ${message}` },
                 { status: 500 }
             );
         }
@@ -118,10 +119,11 @@ async function handler(request: NextRequest) {
             success: true,
             shipment,
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error creating shipment:', error);
+        const message = error instanceof Error ? error.message : 'Failed to create shipment';
         return NextResponse.json(
-            { error: error.message || 'Failed to create shipment' },
+            { error: message },
             { status: 500 }
         );
     }
